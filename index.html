@@ -1,115 +1,1764 @@
-<!DOCTYPE HTML>
-<!--
-	Directive by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+<!DOCTYPE html>
+<!-- 
+    ============================================
+    STARTUP TECH PROGRAM - LANDING PAGE
+    ============================================
+    
+    IMAGES STRUCTURE:
+    - All images extracted from PDF are in the "images/" folder
+    - Total: 211 images extracted (PNG/JPEG format)
+    - Main slide images (large JPEG files ~300KB each):
+      * page_1_img_1.png - Hero/Cover image
+      * page_2_img_1.jpeg - Manifesto slide
+      * page_3_img_1.jpeg - Service details (Page 3)
+      * page_4_img_1.jpeg - Service details (Page 4)
+      * page_5_img_1.jpeg - Service details (Page 5)
+      * page_6_img_1.jpeg - Program visualization
+      * page_7_img_1.jpeg - Program details
+      * page_8_img_1.jpeg - Program features
+      * page_8_img_18.jpeg - Additional program content
+      * page_9_img_1.jpeg - Program information
+      * page_10_img_1.png - Contact information
+      * page_10_img_18.jpeg - Contact details
+      * page_11_img_1.png - Contact information (Page 11)
+    
+    To update images: Search for comment blocks starting with "=====" 
+    in the HTML to find where each image is used.
+    
+    MENU BEHAVIOR:
+    - Shows both Portuguese and English menu items
+    - Active language is highlighted with inverted colors (dark background, white text)
+    - Inactive language is shown with reduced opacity (50%)
 -->
-<html>
-	<head>
-		<title>MUMU Solutions</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-	</head>
-	<body class="is-preload">
-		<!-- Header -->
-			<div id="header">
-					<a href="#" class="logo"><img src="images/logo-transp.png" alt="" /></a>
-				<h1>...........</h1>
-			</div>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUMU Solutions - Startup TECH Program</title>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    
+    <!-- SEO: Sitemap and Robots -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-		<!-- Main -->
-			<div id="main">
+        :root {
+            /* Modern minimalist color palette - Dark theme (default) */
+            --primary-color: #ffffff;
+            --secondary-color: #4a90e2;
+            --accent-color: #5ba3f5;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --bg-light: #1a1a1a;
+            --bg-section: #0f0f0f;
+            --border-color: #2a2a2a;
+            --bg-body: #000000;
+        }
 
-				<header class="major container medium">
-					<h2>We conduct experiments that
-					<br />
-					may or may not seriously
-					<br />
-					break the universe</h2>
-					<!--
-					<p>Tellus erat mauris ipsum fermentum<br />
-					etiam vivamus nunc nibh morbi.</p>
-					-->
-				</header>
+        /* Light theme */
+        html[data-theme="light"] {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2563eb;
+            --accent-color: #3b82f6;
+            --text-primary: #4a90e2;
+            --text-secondary: #4b5563;
+            --bg-light: #f5f7fa;
+            --bg-section: #ffffff;
+            --border-color: #e1e8ed;
+            --bg-body: #f9fafb;
+        }
 
-				<div class="box alt container">
-					<section class="feature left">
-						<a href="#" class="image icon solid fa-signal"><img src="images/pic01.jpg" alt="" /></a>
-						<div class="content">
-							<h3>The First Thing</h3>
-							<p>Vitae natoque dictum etiam semper magnis enim feugiat amet curabitur tempor orci penatibus. Tellus erat mauris ipsum fermentum etiam vivamus eget. Nunc nibh morbi quis fusce lacus.</p>
-						</div>
-					</section>
-					<section class="feature right">
-						<a href="#" class="image icon solid fa-code"><img src="images/pic02.jpg" alt="" /></a>
-						<div class="content">
-							<h3>The Second Thing</h3>
-							<p>Vitae natoque dictum etiam semper magnis enim feugiat amet curabitur tempor orci penatibus. Tellus erat mauris ipsum fermentum etiam vivamus eget. Nunc nibh morbi quis fusce lacus.</p>
-						</div>
-					</section>
-					<section class="feature left">
-						<a href="#" class="image icon solid fa-mobile-alt"><img src="images/pic03.jpg" alt="" /></a>
-						<div class="content">
-							<h3>The Third Thing</h3>
-							<p>Vitae natoque dictum etiam semper magnis enim feugiat amet curabitur tempor orci penatibus. Tellus erat mauris ipsum fermentum etiam vivamus eget. Nunc nibh morbi quis fusce lacus.</p>
-						</div>
-					</section>
-				</div>
+        html {
+            scroll-behavior: smooth;
+        }
 
+        body {
+            font-family: 'Oxygen', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-body);
+            background-image: 
+                linear-gradient(135deg, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 50%, rgba(74, 144, 226, 0.15) 100%);
+            background-size: 100% 100%;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
+        /* Blue fading line effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(180deg, 
+                    transparent 0%,
+                    rgba(74, 144, 226, 0.05) 20%,
+                    rgba(74, 144, 226, 0.1) 50%,
+                    rgba(74, 144, 226, 0.05) 80%,
+                    transparent 100%
+                ),
+                linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(74, 144, 226, 0.08) 30%,
+                    rgba(74, 144, 226, 0.12) 50%,
+                    rgba(74, 144, 226, 0.08) 70%,
+                    transparent 100%
+                );
+            pointer-events: none;
+            z-index: 0;
+        }
 
-		<!-- Footer -->
-			<div id="footer">
-				<div class="container medium">
+        /* Ensure content is above the background effect */
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
 
-					<header class="major last">
-						<h2>Questions or comments?</h2>
-					</header>
+        /* Language Toggle */
+        .language-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 2rem;
+            z-index: 1001;
+            display: flex;
+            gap: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            padding: 0.5rem;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(74, 144, 226, 0.2);
+            backdrop-filter: blur(10px);
+        }
 
-					<p>Vitae natoque dictum etiam semper magnis enim feugiat amet curabitur tempor
-					orci penatibus. Tellus erat mauris ipsum fermentum etiam vivamus.</p>
+        .language-toggle button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background-color: transparent;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
 
-					<form method="post" action="#">
-						<div class="row">
-							<div class="col-6 col-12-mobilep">
-								<input type="text" name="name" placeholder="Name" />
-							</div>
-							<div class="col-6 col-12-mobilep">
-								<input type="email" name="email" placeholder="Email" />
-							</div>
-							<div class="col-12">
-								<textarea name="message" placeholder="Message" rows="6"></textarea>
-							</div>
-							<div class="col-12">
-								<ul class="actions special">
-									<li><input type="submit" value="Send Message" /></li>
-								</ul>
-							</div>
-						</div>
-					</form>
+        .language-toggle button.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
 
-					<ul class="icons">
-						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-					</ul>
+        .language-toggle button:hover {
+            background-color: rgba(74, 144, 226, 0.2);
+        }
 
-					<ul class="copyright">
-						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
+        .language-toggle button.active:hover {
+            background-color: #357abd;
+        }
 
-				</div>
-			</div>
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 12rem;
+            z-index: 1001;
+            display: flex;
+            gap: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            padding: 0.5rem;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(74, 144, 226, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+        html[data-theme="light"] .theme-toggle {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
+        }
 
-	</body>
+        .theme-toggle button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background-color: transparent;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle button:hover {
+            background-color: rgba(74, 144, 226, 0.2);
+        }
+
+        .theme-toggle button.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .theme-toggle button.active:hover {
+            background-color: #357abd;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(74, 144, 226, 0.2);
+            border-bottom: 1px solid rgba(74, 144, 226, 0.3);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        html[data-theme="light"] nav {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(37, 99, 235, 0.1);
+            border-bottom: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        nav.scrolled {
+            padding: 0.75rem 0;
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Grandview', 'Oxygen', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            width: auto;
+            margin-right: 10px;
+            filter: drop-shadow(0 2px 4px rgba(74, 144, 226, 0.3));
+        }
+
+        /* Ensure only active language logo is visible */
+        .logo[data-lang]:not(.active) {
+            display: none !important;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            white-space: nowrap;
+            flex-wrap: nowrap;
+        }
+
+        .nav-menu li {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        /* Menu links - CRITICAL: Only show one language at a time */
+        /* Hide ALL menu links by default */
+        .nav-menu a[data-lang] {
+            display: none !important;
+        }
+        
+        /* Show ONLY Portuguese menu links by default (before JavaScript runs) */
+        body:not(.lang-en) .nav-menu a[data-lang="pt"],
+        body.lang-pt .nav-menu a[data-lang="pt"] {
+            display: inline-block !important;
+        }
+        
+        /* Hide English menu links by default */
+        body:not(.lang-en) .nav-menu a[data-lang="en"] {
+            display: none !important;
+        }
+        
+        /* When English is selected, show English and hide Portuguese */
+        body.lang-en .nav-menu a[data-lang="en"] {
+            display: inline-block !important;
+        }
+        
+        body.lang-en .nav-menu a[data-lang="pt"] {
+            display: none !important;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--secondary-color);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 2rem 80px;
+            background: transparent;
+            position: relative;
+        }
+        
+        /* Blue line effect in hero */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(74, 144, 226, 0.3) 20%,
+                rgba(74, 144, 226, 0.6) 50%,
+                rgba(74, 144, 226, 0.3) 80%,
+                transparent 100%
+            );
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-family: 'Grandview', 'Oxygen', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .cta-button:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 100px 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Grandview', 'Oxygen', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Manifesto Section */
+        .manifesto {
+            background-color: transparent;
+        }
+
+        .manifesto-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .manifesto-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .manifesto-list li {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        html[data-theme="light"] .manifesto-list li {
+            color: #3b82f6;
+        }
+
+        .manifesto-list li:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .manifesto-list li::before {
+            content: '•';
+            color: var(--secondary-color);
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        /* About Section */
+        .about {
+            background-color: var(--bg-section);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .about-card {
+            padding: 2.5rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        html[data-theme="light"] .about-card p {
+            color: #3b82f6;
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+            border-color: rgba(74, 144, 226, 0.5);
+        }
+
+        .about-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .about-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Programs Section */
+        .programs {
+            background-color: transparent;
+        }
+
+        .programs-content {
+            margin-top: 3rem;
+        }
+
+        .program-intro {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .program-card {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        html[data-theme="light"] .program-card ul li {
+            color: #3b82f6;
+        }
+
+        .program-card:hover {
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+            border-color: rgba(74, 144, 226, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .program-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .program-card ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .program-card ul li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .program-card ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        /* Images and Graphs Section */
+        .image-container {
+            margin: 3rem 0;
+            padding: 2rem;
+            background-color: rgba(26, 26, 26, 0.5);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 1rem 0;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .image-item {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        html[data-theme="light"] .image-item {
+            color: #3b82f6;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .graph-container {
+            margin: 3rem 0;
+            padding: 2rem;
+            background-color: rgba(26, 26, 26, 0.5);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .graph-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Contact Section */
+        .contact {
+            background-color: transparent;
+        }
+
+        .contact-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-info {
+            margin-top: 3rem;
+        }
+
+        .contact-item {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-item strong {
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .contact-item a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item a:hover {
+            color: #357abd;
+        }
+
+        .contact-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        footer p {
+            color: var(--text-secondary);
+        }
+
+        /* Programa/Program Workflow Section */
+        .programa {
+            background-color: var(--bg-section);
+        }
+
+        .workflow-container {
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .workflow-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .workflow-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        /* Connecting line between phases (desktop only) */
+        .workflow-timeline::before {
+            content: '';
+            position: absolute;
+            top: 80px;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(74, 144, 226, 0.3) 10%,
+                rgba(74, 144, 226, 0.5) 50%,
+                rgba(74, 144, 226, 0.3) 90%,
+                transparent 100%
+            );
+            z-index: 0;
+            animation: flowLine 3s ease-in-out forwards;
+        }
+
+        @keyframes flowLine {
+            from {
+                width: 0%;
+                left: 50%;
+                right: auto;
+            }
+            to {
+                width: 100%;
+                left: 5%;
+                right: 5%;
+            }
+        }
+
+        .workflow-phase {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(74, 144, 226, 0.2);
+            padding: 2rem;
+            border-radius: 12px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: phaseSlideUp 0.6s ease-out backwards;
+        }
+
+        html[data-theme="light"] .workflow-phase-items li {
+            color: #3b82f6;
+        }
+
+        .workflow-phase:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .workflow-phase:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .workflow-phase:nth-child(3) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes phaseSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .workflow-phase:hover {
+            border-color: rgba(74, 144, 226, 0.6);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .workflow-phase h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workflow-phase-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .workflow-phase-items {
+            list-style: none;
+        }
+
+        .workflow-phase-items li {
+            padding: 0.7rem 0;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding-left: 1.5rem;
+            position: relative;
+            border-bottom: 1px solid rgba(74, 144, 226, 0.1);
+        }
+
+        .workflow-phase-items li:last-child {
+            border-bottom: none;
+        }
+
+        .workflow-phase-items li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+            animation: arrowPulse 1.5s ease-in-out infinite;
+        }
+
+        .workflow-phase-items li:nth-child(1)::before {
+            animation-delay: 0s;
+        }
+
+        .workflow-phase-items li:nth-child(2)::before {
+            animation-delay: 0.2s;
+        }
+
+        .workflow-phase-items li:nth-child(3)::before {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(5px);
+                opacity: 0.6;
+            }
+        }
+
+        .workflow-journey {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.1) 0%, transparent 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+        }
+
+        .journey-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .journey-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 0.5rem;
+                right: 7rem;
+                padding: 0.4rem;
+            }
+
+            .theme-toggle button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .language-toggle {
+                top: 0.5rem;
+                right: 1rem;
+                padding: 0.4rem;
+            }
+
+            .language-toggle button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                flex-direction: column;
+                background-color: white;
+                width: 100%;
+                padding: 2rem;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+                transition: left 0.3s ease;
+                gap: 1.5rem;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .hero {
+                padding: 100px 1.5rem 60px;
+            }
+
+            section {
+                padding: 60px 1.5rem;
+            }
+
+            .about-content,
+            .programs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Hide workflow timeline connecting line on mobile */
+            .workflow-timeline::before {
+                display: none;
+            }
+
+            .workflow-phase {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Smooth scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* Language switching - Hide ALL language elements by default */
+        [data-lang] {
+            display: none !important;
+        }
+        
+        /* ONLY show elements with active class (correct language) - block elements */
+        [data-lang].active {
+            display: block !important;
+        }
+        
+        /* Special case for inline elements when active */
+        .nav-menu a[data-lang].active,
+        .logo[data-lang].active,
+        .cta-button[data-lang].active {
+            display: inline-block !important;
+        }
+
+        /* Cookie Consent Toast */
+        .cookie-consent-toast {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.95);
+            border-top: 2px solid var(--secondary-color);
+            padding: 1.5rem 2rem;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 20px rgba(74, 144, 226, 0.3);
+            animation: slideUpCookie 0.4s ease-out;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        html[data-theme="light"] .cookie-consent-toast {
+            background-color: rgba(255, 255, 255, 0.98);
+            border-top: 2px solid var(--secondary-color);
+            box-shadow: 0 -2px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .cookie-consent-toast.hidden {
+            display: none !important;
+        }
+
+        @keyframes slideUpCookie {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .cookie-consent-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .cookie-consent-text {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .cookie-consent-text p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none !important;
+        }
+
+        .cookie-consent-text p[data-lang].active {
+            display: block !important;
+        }
+
+        .cookie-agree-btn {
+            display: none !important;
+            padding: 0.7rem 1.5rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .cookie-agree-btn[data-lang].active {
+            display: inline-block !important;
+        }
+
+        .cookie-agree-btn:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .cookie-consent-toast {
+                padding: 1rem 1.5rem;
+            }
+
+            .cookie-consent-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .cookie-consent-text p {
+                font-size: 0.9rem;
+            }
+
+            .cookie-agree-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+
+    <!-- Cookie Consent Toast -->
+    <div id="cookieConsent" class="cookie-consent-toast">
+        <div class="cookie-consent-content">
+            <div class="cookie-consent-text">
+                <p data-lang="pt">Usamos cookies apenas para a execução do site. Nenhum dado pessoal será armazenado.</p>
+                <p data-lang="en">We use cookies only for website execution. No personal data will be stored.</p>
+            </div>
+            <button id="cookieAgree" class="cookie-agree-btn" data-lang="pt">Eu Concordo</button>
+            <button id="cookieAgreeEn" class="cookie-agree-btn" data-lang="en">I Agree</button>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeToggle" class="active" onclick="switchTheme(currentTheme === 'dark' ? 'light' : 'dark')" title="Toggle Theme">🌙</button>
+    </div>
+
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button id="langPt" class="active" onclick="switchLanguage('pt')">PT</button>
+        <button id="langEn" onclick="switchLanguage('en')">EN</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo" data-lang="pt" data-lang-key="logo">
+                <img src="images/logo.png" alt="MUMU Solutions" style="height: 40px; width: auto; vertical-align: middle; margin-right: 10px;">
+            </a>
+            <a href="#home" class="logo" data-lang="en" data-lang-key="logo">
+                <img src="images/logo.png" alt="MUMU Solutions" style="height: 40px; width: auto; vertical-align: middle; margin-right: 10px;">
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" data-lang="pt" data-lang-key="nav-home">Início</a><a href="#home" data-lang="en" data-lang-key="nav-home">Home</a></li>
+                <li><a href="#manifesto" data-lang="pt" data-lang-key="nav-manifesto">Manifesto</a><a href="#manifesto" data-lang="en" data-lang-key="nav-manifesto">Manifesto</a></li>
+                <li><a href="#consultoria" data-lang="pt" data-lang-key="nav-consultoria">Consultoria</a><a href="#consultoria" data-lang="en" data-lang-key="nav-consultoria">Consulting</a></li>
+                <li><a href="#servicos" data-lang="pt" data-lang-key="nav-servicos">Serviços</a><a href="#servicos" data-lang="en" data-lang-key="nav-servicos">Services</a></li>
+                <li><a href="#programa" data-lang="pt" data-lang-key="nav-programa">Programa</a><a href="#programa" data-lang="en" data-lang-key="nav-programa">Program</a></li>
+                <li><a href="#parcerias" data-lang="pt" data-lang-key="nav-parcerias">Parcerias</a><a href="#parcerias" data-lang="en" data-lang-key="nav-parcerias">Partnerships</a></li>
+                <li><a href="#contact" data-lang="pt" data-lang-key="nav-contact">Contato</a><a href="#contact" data-lang="en" data-lang-key="nav-contact">Contact</a></li>
+            </ul>
+            <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <!-- 
+                ============================================
+                HERO SECTION IMAGE - PAGE 1
+                ============================================
+                Main hero/cover image from slide 1
+                Update: images/page_1_img_1.png
+            -->
+            <h1 data-lang="pt" data-lang-key="hero-title">MUMU Solutions</h1>
+            <h1 data-lang="en" data-lang-key="hero-title">MUMU Solutions</h1>
+            <h2 style="font-size: clamp(1.8rem, 4vw, 3rem); margin-top: 1rem; color: var(--secondary-color);" data-lang="pt" data-lang-key="hero-subtitle">PROGRAMA STARTUP TECH</h2>
+            <h2 style="font-size: clamp(1.8rem, 4vw, 3rem); margin-top: 1rem; color: var(--secondary-color);" data-lang="en" data-lang-key="hero-subtitle">STARTUP TECH PROGRAM</h2>
+            <p style="margin-top: 2rem; font-size: clamp(1.1rem, 2vw, 1.4rem);" data-lang="pt" data-lang-key="hero-tagline">Crescer sustentavelmente também é TECH.</p>
+            <p style="margin-top: 2rem; font-size: clamp(1.1rem, 2vw, 1.4rem);" data-lang="en" data-lang-key="hero-tagline">Growing sustainably is also TECH.</p>
+            <a href="#programa" class="cta-button" data-lang="pt" data-lang-key="cta-button">Conheça o Programa</a>
+            <a href="#programa" class="cta-button" data-lang="en" data-lang-key="cta-button">Learn More</a>
+        </div>
+    </section>
+
+    <!-- Manifesto Section -->
+    <section id="manifesto" class="manifesto">
+        <h2 class="section-title" data-lang="pt" data-lang-key="manifesto-title">MANIFESTO</h2>
+        <h2 class="section-title" data-lang="en" data-lang-key="manifesto-title">MANIFESTO</h2>
+        
+        <!-- 
+            ============================================
+            MANIFESTO SECTION - SLIDE 2
+            ============================================
+            Manifesto slide image from slide 2
+            Update: images/slide_2_img_1.png
+        -->
+        
+        <div class="manifesto-content">
+            <ul class="manifesto-list">
+                <li data-lang="pt" data-lang-key="manifesto-1">Fornecer base tecnológica para empresas de pequeno porte e startups em estado inicial;</li>
+                <li data-lang="en" data-lang-key="manifesto-1">Provide technological foundation for small businesses and early-stage startups;</li>
+                
+                <li data-lang="pt" data-lang-key="manifesto-2">Posicionar a tecnologia como aliada do negócio desde o início;</li>
+                <li data-lang="en" data-lang-key="manifesto-2">Position technology as a business ally from the start;</li>
+                
+                <li data-lang="pt" data-lang-key="manifesto-3">Nascer e crescer pronto para escalar;</li>
+                <li data-lang="en" data-lang-key="manifesto-3">Be born and grow ready to scale;</li>
+                
+                <li data-lang="pt" data-lang-key="manifesto-4">Ser TECH pode começar simples;</li>
+                <li data-lang="en" data-lang-key="manifesto-4">Being TECH can start simple;</li>
+                
+                <li data-lang="pt" data-lang-key="manifesto-5">Solução responsável em primeiro lugar;</li>
+                <li data-lang="en" data-lang-key="manifesto-5">Responsible solution first;</li>
+                
+                <li data-lang="pt" data-lang-key="manifesto-6">Ser Mumu...</li>
+                <li data-lang="en" data-lang-key="manifesto-6">Be Mumu...</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Consultoria Section - SLIDE 3 -->
+    <section id="consultoria" class="about">
+        <h2 class="section-title" data-lang="pt" data-lang-key="consultoria-title">Consultoria</h2>
+        <h2 class="section-title" data-lang="en" data-lang-key="consultoria-title">Consulting</h2>
+        
+        <!-- 
+            ============================================
+            CONSULTORIA SECTION - SLIDE 3
+            ============================================
+            Update: images/slide_3_img_1.png
+        -->        
+        <div class="manifesto-content">
+            <ul class="manifesto-list">
+                <li data-lang="pt">Arquitetura `as is` e `to be`;</li>
+                <li data-lang="en">Architecture `as is` and `to be`;</li>
+                <li data-lang="pt">Segurança da Informação;</li>
+                <li data-lang="en">Information Security;</li>
+                <li data-lang="pt">Qualidade de Código;</li>
+                <li data-lang="en">Code Quality;</li>
+                <li data-lang="pt">Infraestrutura (Cloud e on-premise);</li>
+                <li data-lang="en">Infrastructure (Cloud and on-premise);</li>
+                <li data-lang="pt">FinOPS – Custos de acordo com a necessidade;</li>
+                <li data-lang="en">FinOPS – Costs according to need;</li>
+                <li data-lang="pt">Assessment e refactoring WEB/Mobile/APIs/ETL;</li>
+                <li data-lang="en">Assessment and refactoring WEB/Mobile/APIs/ETL;</li>
+                <li data-lang="pt">Boas práticas (AWS/Azure/LGPD/PCI);</li>
+                <li data-lang="en">Best practices (AWS/Azure/LGPD/PCI);</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Serviços Section - SLIDE 4 -->
+    <section id="servicos" class="about">
+        <h2 class="section-title" data-lang="pt" data-lang-key="servicos-title">Serviços</h2>
+        <h2 class="section-title" data-lang="en" data-lang-key="servicos-title">Services</h2>
+        
+        <!-- 
+            ============================================
+            SERVIÇOS SECTION - SLIDE 4
+            ============================================
+            Update: images/slide_4_img_1.png
+        -->
+        
+        <div class="manifesto-content">
+            <ul class="manifesto-list">
+                <li data-lang="pt">Desenvolvimento projetos de sistemas WEB/Mobile/APIs/integrações;</li>
+                <li data-lang="en">Development of WEB/Mobile/APIs/integrations system projects;</li>
+                <li data-lang="pt">Automação de rotinas em infraestrutura;</li>
+                <li data-lang="en">Infrastructure routine automation;</li>
+                <li data-lang="pt">Operação e manutenção as a Service;</li>
+                <li data-lang="en">Operation and maintenance as a Service;</li>
+                <li data-lang="pt">Techlead e SRE as a Service;</li>
+                <li data-lang="en">Techlead and SRE as a Service;</li>
+                <li data-lang="pt">Assessment on demand;</li>
+                <li data-lang="en">Assessment on demand;</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Programa/Program Section - SLIDE 8 -->
+    <section id="programa" class="programa">
+        <h2 class="section-title" data-lang="pt" data-lang-key="programa-title">PROGRAMA</h2>
+        <h2 class="section-title" data-lang="en" data-lang-key="programa-title">PROGRAM</h2>
+        
+        <div class="workflow-container">
+            <p class="workflow-subtitle" data-lang="pt" data-lang-key="programa-subtitle">Do zero ao dia-a-dia</p>
+            <p class="workflow-subtitle" data-lang="en" data-lang-key="programa-subtitle">From zero to day-to-day</p>
+
+            <div class="workflow-timeline">
+                <!-- Phase 1: Consultoria -->
+                <div class="workflow-phase">
+                    <h3>
+                        <span class="workflow-phase-number">1</span>
+                        <span data-lang="pt" data-lang-key="workflow-phase1">Consultoria</span>
+                        <span data-lang="en" data-lang-key="workflow-phase1">Consulting</span>
+                    </h3>
+                    <ul class="workflow-phase-items">
+                        <li data-lang="pt">Análise de perfis para composição de equipe</li>
+                        <li data-lang="en">Profile analysis for team composition</li>
+                        
+                        <li data-lang="pt">Capacitação de novos colaboradores</li>
+                        <li data-lang="en">Training of new team members</li>
+                        
+                        <li data-lang="pt">Preparação e avaliação durante `on boarding`</li>
+                        <li data-lang="en">Preparation and evaluation during `on boarding`</li>
+                        
+                        <li data-lang="pt">Arquitetura `as is` e `to be`</li>
+                        <li data-lang="en">Architecture `as is` and `to be`</li>
+                        
+                        <li data-lang="pt">Plano e políticas Segurança da Informação</li>
+                        <li data-lang="en">Information Security planning and policies</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 2: Serviços -->
+                <div class="workflow-phase">
+                    <h3>
+                        <span class="workflow-phase-number">2</span>
+                        <span data-lang="pt" data-lang-key="workflow-phase2">Serviços</span>
+                        <span data-lang="en" data-lang-key="workflow-phase2">Services</span>
+                    </h3>
+                    <ul class="workflow-phase-items">
+                        <li data-lang="pt">Desenvolvimento das soluções core da empresa</li>
+                        <li data-lang="en">Development of company's core solutions</li>
+                        
+                        <li data-lang="pt">Infraestrutura - Criação de ambiente inicial</li>
+                        <li data-lang="en">Infrastructure - Initial environment setup</li>
+                        
+                        <li data-lang="pt">FinOPS – Custos de acordo com a necessidade</li>
+                        <li data-lang="en">FinOPS – Costs according to need</li>
+                        
+                        <li data-lang="pt">Integração com ferramentas satélite e parceiros</li>
+                        <li data-lang="en">Integration with satellite tools and partners</li>
+                        
+                        <li data-lang="pt">Devops/SRE/Platform/TechLead as a Service</li>
+                        <li data-lang="en">Devops/SRE/Platform/TechLead as a Service</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 3: Parcerias -->
+                <div class="workflow-phase">
+                    <h3>
+                        <span class="workflow-phase-number">3</span>
+                        <span data-lang="pt" data-lang-key="workflow-phase3">Parcerias</span>
+                        <span data-lang="en" data-lang-key="workflow-phase3">Partnerships</span>
+                    </h3>
+                    <ul class="workflow-phase-items">
+                        <li data-lang="pt">Busca por empresas parceiras/aliadas</li>
+                        <li data-lang="en">Search for partner/allied companies</li>
+                        
+                        <li data-lang="pt">Operação e manutenção as a Service</li>
+                        <li data-lang="en">Operation and maintenance as a Service</li>
+                        
+                        <li data-lang="pt">Boas práticas (AWS/Azure/LGPD/PCI)</li>
+                        <li data-lang="en">Best practices (AWS/Azure/LGPD/PCI)</li>
+                        
+                        <li data-lang="pt">Seu negócio em primeiro lugar</li>
+                        <li data-lang="en">Your business first</li>
+                        
+                        <li data-lang="pt">Escalabilidade e crescimento contínuo</li>
+                        <li data-lang="en">Scalability and continuous growth</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Journey Summary -->
+            <div class="workflow-journey">
+                <div class="journey-text" data-lang="pt" data-lang-key="journey-text">🚀 Crescendo sustentavelmente com TECH</div>
+                <div class="journey-text" data-lang="en" data-lang-key="journey-text">🚀 Growing sustainably with TECH</div>
+                <div class="journey-description" data-lang="pt" data-lang-key="journey-description">Um programa estruturado para levar sua startup do conceito até o sucesso operacional</div>
+                <div class="journey-description" data-lang="en" data-lang-key="journey-description">A structured program to take your startup from concept to operational success</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parcerias Section - SLIDE 5 -->
+    <section id="parcerias" class="about">
+        <h2 class="section-title" data-lang="pt" data-lang-key="parcerias-title">Parcerias</h2>
+        <h2 class="section-title" data-lang="en" data-lang-key="parcerias-title">Partnerships</h2>
+        
+        <!-- 
+            ============================================
+            PARCERIAS SECTION - SLIDE 5
+            ============================================
+            Update: images/slide_5_img_1.png
+        -->
+        
+        <div class="manifesto-content">
+            <ul class="manifesto-list">
+                <li data-lang="pt">Análise de perfis para composição de equipe;</li>
+                <li data-lang="en">Profile analysis for team composition;</li>
+                <li data-lang="pt">Busca por empresas parceiras/aliadas;</li>
+                <li data-lang="en">Search for partner/allied companies;</li>
+                <li data-lang="pt">Capacitação de recursos `ad-hoc` / remoto;</li>
+                <li data-lang="en">Training of `ad-hoc` / remote resources;</li>
+                <li data-lang="pt">Preparação e avaliação durante `on boarding`;</li>
+                <li data-lang="en">Preparation and evaluation during `on boarding`;</li>
+                <li data-lang="pt">Seu negócio em primeiro lugar;</li>
+                <li data-lang="en">Your business first;</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <h2 class="section-title" data-lang="pt" data-lang-key="contact-title">Contato</h2>
+        <h2 class="section-title" data-lang="en" data-lang-key="contact-title">Contact</h2>
+        
+        <!-- 
+            ============================================
+            CONTACT SECTION - SLIDES 10, 11
+            ============================================
+            Contact information slides from slides 10 and 11
+            Update: images/slide_10_img_1.jpg, slide_10_img_2.png, slide_11_img_1.png
+        -->
+        
+        <div class="contact-content">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <strong data-lang="pt" data-lang-key="contact-email">Email | <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a></strong>
+                    <strong data-lang="en" data-lang-key="contact-email">Email | <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a></strong>
+                    
+                </div>
+                <div class="contact-item">
+                    <strong data-lang="pt" data-lang-key="contact-linkedin">LinkedIn | <a href="https://www.linkedin.com/company/mumu-solutions/" target="_blank">linkedin.com/company/mumu-solutions</a></strong>
+                    <strong data-lang="en" data-lang-key="contact-linkedin">LinkedIn | <a href="https://www.linkedin.com/company/mumu-solutions/" target="_blank">linkedin.com/company/mumu-solutions</a></strong>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p data-lang="pt" data-lang-key="footer">&copy; <span id="year"></span> Mumu Consultoria - Todos os direitos reservados.</p>
+        <p data-lang="en" data-lang-key="footer">&copy; <span id="year"></span> Mumu Consultoria - All rights reserved.</p>
+
+        <script>
+            document.getElementById('year').textContent = new Date().getFullYear();
+        </script>
+    </footer>
+
+    <script>
+        // Language switching
+        let currentLang = 'pt';
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            
+            // Update body class for CSS targeting
+            document.body.classList.remove('lang-pt', 'lang-en');
+            document.body.classList.add('lang-' + lang);
+            
+            // Update active button
+            document.getElementById('langPt').classList.toggle('active', lang === 'pt');
+            document.getElementById('langEn').classList.toggle('active', lang === 'en');
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+            
+            // Show/hide content based on language
+            document.querySelectorAll('[data-lang]').forEach(element => {
+                if (element.getAttribute('data-lang') === lang) {
+                    element.classList.add('active');
+                } else {
+                    element.classList.remove('active');
+                }
+            });
+            
+            // Update page title
+            if (lang === 'pt') {
+                document.title = 'MUMU Solutions - Startup TECH Program';
+            } else {
+                document.title = 'MUMU Solutions - Startup TECH Program';
+            }
+        }
+
+        // Theme switching
+        let currentTheme = 'dark';
+
+        function switchTheme(theme) {
+            currentTheme = theme;
+            
+            // Update HTML data-theme attribute
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            // Update button icon and title
+            const themeToggle = document.getElementById('themeToggle');
+            if (theme === 'dark') {
+                themeToggle.textContent = '🌙';
+                themeToggle.title = 'Switch to Light Theme';
+            } else {
+                themeToggle.textContent = '☀️';
+                themeToggle.title = 'Switch to Dark Theme';
+            }
+            
+            // Save theme preference
+            localStorage.setItem('mumu-theme', theme);
+        }
+
+        // Initialize theme immediately and on page load
+        // Detect system preference and saved preference
+        function initializeTheme() {
+            let savedTheme = localStorage.getItem('mumu-theme');
+            
+            if (savedTheme) {
+                // Use saved preference
+                switchTheme(savedTheme);
+            } else {
+                // Check system preference
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+                
+                if (prefersLight) {
+                    switchTheme('light');
+                } else {
+                    // Default to dark theme
+                    switchTheme('dark');
+                }
+            }
+        }
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('mumu-theme')) {
+                switchTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+
+        // Initialize immediately if DOM is ready
+        if (document.readyState !== 'loading') {
+            initializeTheme();
+        }
+
+        // Initialize language immediately and on page load
+        // Set Portuguese as default
+        // Add initial body class
+        document.body.classList.add('lang-pt');
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                initializeTheme();
+                switchLanguage('pt');
+                initializeCookieConsent();
+                setupCookieConsentListeners();
+            });
+        } else {
+            // DOM already loaded, initialize immediately
+            switchLanguage('pt');
+            initializeCookieConsent();
+            setupCookieConsentListeners();
+        }
+
+        // ============================================
+        // COOKIE CONSENT MANAGEMENT
+        // ============================================
+        const COOKIE_NAME = 'mumu_consent';
+        const COOKIE_EXPIRY_DAYS = 7;
+
+        // Encrypt consent using base64 encoding with timestamp
+        function encryptConsent(value) {
+            const timestamp = Date.now();
+            const data = JSON.stringify({ value: value, ts: timestamp });
+            return btoa(data); // Base64 encoding for obfuscation
+        }
+
+        // Decrypt and validate consent cookie
+        function decryptConsent(encodedValue) {
+            try {
+                const data = JSON.parse(atob(encodedValue));
+                const timestamp = data.ts;
+                const now = Date.now();
+                const daysPassed = (now - timestamp) / (1000 * 60 * 60 * 24);
+                
+                // Check if cookie is still valid (within 7 days)
+                if (daysPassed <= COOKIE_EXPIRY_DAYS) {
+                    return data.value;
+                }
+                return null; // Cookie expired
+            } catch (e) {
+                return null; // Invalid cookie
+            }
+        }
+
+        // Set cookie with encryption and expiration
+        function setConsentCookie() {
+            const encrypted = encryptConsent('accepted');
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + COOKIE_EXPIRY_DAYS);
+            
+            // Set secure cookie (HttpOnly flag cannot be set from client-side, but we use Secure and SameSite)
+            document.cookie = `${COOKIE_NAME}=${encrypted}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Strict; Secure`;
+        }
+
+        // Get consent cookie
+        function getConsentCookie() {
+            const name = COOKIE_NAME + '=';
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.indexOf(name) === 0) {
+                    const encrypted = cookie.substring(name.length);
+                    return decryptConsent(encrypted);
+                }
+            }
+            return null;
+        }
+
+        // Initialize cookie consent toast visibility
+        function initializeCookieConsent() {
+            const consentValue = getConsentCookie();
+            const cookieToast = document.getElementById('cookieConsent');
+            
+            if (consentValue === 'accepted') {
+                // User already agreed, hide the toast
+                cookieToast.classList.add('hidden');
+            } else {
+                // Show the consent toast
+                cookieToast.classList.remove('hidden');
+            }
+        }
+
+        // Setup cookie consent button listeners
+        function setupCookieConsentListeners() {
+            const agreeButtons = document.querySelectorAll('.cookie-agree-btn');
+            agreeButtons.forEach(btn => {
+                btn.addEventListener('click', handleCookieAgreement);
+            });
+        }
+
+        // Handle cookie agreement
+        function handleCookieAgreement() {
+            setConsentCookie();
+            const cookieToast = document.getElementById('cookieConsent');
+            cookieToast.classList.add('hidden');
+        }
+
+        // Update language switcher to handle cookie consent text
+        const originalUpdateLanguageElements = window.switchLanguage;
+        window.switchLanguage = function(lang) {
+            originalUpdateLanguageElements(lang);
+            // Update cookie consent elements
+            document.querySelectorAll('.cookie-consent-text p, .cookie-agree-btn').forEach(el => {
+                const langAttr = el.getAttribute('data-lang');
+                if (langAttr === lang) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        };
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = document.getElementById('navbar').offsetHeight;
+                    const targetPosition = target.offsetTop - navHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    // Close mobile menu if open
+                    document.getElementById('navMenu').classList.remove('active');
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll progress indicator
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        window.addEventListener('scroll', () => {
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollIndicator.style.width = scrolled + '%';
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navMenu.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                navMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+            }
+        });
+
+        // Active menu item highlighting
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-menu a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                const navHeight = navbar.offsetHeight;
+                if (window.scrollY >= (sectionTop - navHeight - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
 </html>

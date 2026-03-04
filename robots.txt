@@ -1,0 +1,105 @@
+# robots.txt - MUMU Solutions SEO Configuration (Restricted)
+# Last updated: March 2026
+# This is a RESTRICTIVE configuration - only essential pages are allowed
+
+# Default rules for all search engines (VERY RESTRICTIVE)
+User-agent: *
+Allow: /$
+Allow: /index.html
+Allow: /images/logo.png
+Allow: /sitemap.xml
+Disallow: /
+Disallow: /temp/
+Disallow: /venv/
+Disallow: /*.pdf$
+Disallow: /*.env$
+Disallow: /.*\.php$
+Disallow: /admin/
+Disallow: /config/
+Disallow: /.well-known/
+Disallow: /.git/
+Disallow: /.gitignore
+Disallow: /node_modules/
+Disallow: /__pycache__/
+
+# Crawl delay (seconds)
+Crawl-delay: 30
+
+# Request rate - max 20 requests per 60 seconds
+Request-rate: 20/60
+
+# Sitemap location
+Sitemap: https://mumu.solutions/sitemap.xml
+
+# Google specific rules
+User-agent: Googlebot
+Allow: /$
+Allow: /index.html
+Allow: /images/
+Allow: /sitemap.xml
+Disallow: /admin/
+Disallow: /config/
+Disallow: /temp/
+Disallow: /venv/
+Crawl-delay: 20
+
+# Google Image Bot
+User-agent: Googlebot-Image
+Allow: /images/logo.png
+Disallow: /
+
+# Bing specific rules
+User-agent: Bingbot
+Allow: /$
+Allow: /index.html
+Allow: /images/
+Disallow: /admin/
+Disallow: /temp/
+Disallow: /venv/
+Crawl-delay: 30
+
+# Block aggressive and unwanted bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: Screaming Frog
+Disallow: /
+
+User-agent: rogerbot
+Disallow: /
+
+User-agent: curl
+Disallow: /
+
+User-agent: wget
+Disallow: /
+
+# Allow essential social media crawlers only
+User-agent: facebookexternalhit
+Allow: /$
+Allow: /index.html
+Disallow: /admin/
+
+User-agent: Twitterbot
+Allow: /$
+Allow: /index.html
+Disallow: /admin/
+
+User-agent: LinkedInBot
+Allow: /$
+Allow: /index.html
+Disallow: /admin/
+
+# Slack bot
+User-agent: Slurp
+Allow: /
+Disallow: /admin/
