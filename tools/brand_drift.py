@@ -32,6 +32,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import urlparse, unquote
 
 ERROR, WARN, INFO = "ERROR", "WARN", "INFO"
 
@@ -107,6 +108,31 @@ def gh_file(repo, path, ref):
     if isinstance(blob, list) or "content" not in blob:
         return None
     return base64.b64decode(blob["content"]).decode("utf-8", "replace")
+
+
+def is_external(url):
+    return bool(urlparse(url).scheme) or url.startswith("//")
+
+
+def gh_json_safe(path):
+    try:
+        return gh_json(path)
+    except RuntimeError:
+        return None
+
+
+def brand_format(repo, ref, key):
+    """One registered format from brand/tokens/formats.yaml, e.g. open_graph."""
+    text = gh_file(repo, "brand/tokens/formats.yaml", ref)
+    if not text:
+        return None
+    m = re.search(rf"^{key}:\s*\{{(.+?)\}}", text, re.M)
+    if not m:
+        return None
+    out = {}
+    for k, v in re.findall(r"(\w+):\s*([^,}\s]+)", m.group(1)):
+        out[k] = int(v) if v.isdigit() else v
+    return out
 
 
 def latest_tag(repo):
@@ -414,23 +440,59 @@ def run(site_dir: Path, repo: str, ref: str):
             + ", ".join(sorted(set(re.findall(r"'([A-Za-z ]+)'", " ".join(site['families'].values()))))))
 
     # -- check 5: assets the brand registers ----------------------------------
-    og = site_dir / "images" / "og-image.png"
-    if og.exists():
-        if not png_is_png(og):
+    # Resolve the share image from the page's own og:image rather than assuming
+    # a filename — the site is free to name it whatever the brand named it.
+    m = re.search(r'<meta\s+property="og:image"\s+content="([^"]+)"', html)
+    og_url = m.group(1) if m else ""
+    og_rel = (urlparse(og_url).path if is_external(og_url) else og_url).lstrip("/")
+    og = site_dir / unquote(og_rel) if og_rel else None
+    want = brand_format(repo, ref, "open_graph")
+    if og and og.exists():
+        if not png_is_png(og) and (not want or want.get("format", "png") == "png"):
             add(ERROR, "asset-format",
-                "images/og-image.png is not PNG data despite the extension "
-                "(brand spec defect 4 — unacceptable in a canonical asset)",
-                "re-encode as real PNG, e.g. sips -s format png og-image.png --out og-image.png")
+                f"{og_rel} is not PNG data despite the extension "
+                f"(brand spec defect 4 — unacceptable in a canonical asset)")
         size = png_size(og)
-        if size and size != (1200, 630):
-            add(ERROR, "asset-format", f"og-image is {size[0]}×{size[1]}, brand format is 1200×630")
-    else:
-        add(WARN, "asset-format", "images/og-image.png is missing")
+        if size and want and (size[0], size[1]) != (want["width"], want["height"]):
+            add(ERROR, "asset-format",
+                f"{og_rel} is {size[0]}×{size[1]}; formats.yaml registers "
+                f"open_graph at {want['width']}×{want['height']}")
+    elif og_rel:
+        add(ERROR, "asset-format", f"og:image points at {og_rel}, which is not in the repo")
 
-    logo_svgs = gh_json(f"repos/{repo}/contents/brand/source/logo?ref={ref}") if brand["tokens"] else None
-    if isinstance(logo_svgs, list) and any(f["name"].endswith(".svg") for f in logo_svgs):
-        if not list((site_dir / "images").glob("*.svg")):
-            add(WARN, "logo", "the brand now ships vector logo source, but the site still uses only raster")
+    # Provenance beats file format. The brand's sanctioned handoff is
+    # dist/assets, and logo.yaml assigns those raster exports to specific slots
+    # — so "the site uses a PNG" is not a finding. "The site uses a PNG the
+    # brand did not generate, or generated differently" is.
+    dist = gh_json_safe(f"repos/{repo}/contents/dist/assets?ref={ref}")
+    if isinstance(dist, list) and dist:
+        by_name = {f["name"]: f for f in dist}
+        local = sorted((site_dir / "images" / "brand").glob("*")) if (site_dir / "images" / "brand").is_dir() else []
+        if not local:
+            add(WARN, "asset-provenance",
+                f"the brand publishes {len(by_name)} generated assets in dist/assets at {ref}, "
+                f"but the site copies none of them into images/brand/")
+        for f in local:
+            entry = by_name.get(f.name)
+            if not entry:
+                add(WARN, "asset-provenance",
+                    f"images/brand/{f.name} is not in the brand's dist/assets at {ref} — "
+                    f"either renamed here or dropped there")
+            elif entry.get("size") != f.stat().st_size:
+                add(ERROR, "asset-provenance",
+                    f"images/brand/{f.name} is {f.stat().st_size} bytes, the brand's is "
+                    f"{entry['size']} — the copy is stale or was edited by hand",
+                    f"re-copy from dist/assets at {ref}")
+        manifest = site_dir / "images" / "brand" / "MANIFEST.json"
+        if manifest.exists() and brand["version"]:
+            try:
+                versions = {v.get("version") for v in json.loads(manifest.read_text())["files"].values()}
+                if versions - {brand["version"]}:
+                    add(ERROR, "asset-provenance",
+                        f"images/brand/MANIFEST.json says {sorted(versions)}, brand at {ref} is "
+                        f"{brand['version']} — the copied assets are from another release")
+            except (json.JSONDecodeError, KeyError) as e:
+                add(WARN, "asset-provenance", f"images/brand/MANIFEST.json is unreadable: {e}")
 
     # -- check 6: is the site quoting a released brand version? ---------------
     if brand["version"]:
