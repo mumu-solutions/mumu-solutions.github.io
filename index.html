@@ -102,9 +102,17 @@
 @font-face{font-family:'IBM Plex Mono';src:url(fonts/ibm-plex-mono-500-latin.woff2) format('woff2');font-weight:500;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 
 /* ----------------------------------------------------------------- tokens */
-/* Each block declares the same key set. The hex line is the sRGB fallback;
-   the oklch line below it wins wherever oklch is supported and reproduces the
-   wide-gamut original (the brand blue sits outside sRGB). */
+/* Each block declares the same key set, twice: hex, then the same colour in
+   oklch for browsers that support it.
+   The hex is canonical — that is brand decision D2 in mumu-solutions/mumu-branding
+   — and every oklch value here is derived from the hex above it, never typed by
+   hand, at the brand's precision floor (lightness 2dp, chroma 4dp, hue 2dp).
+   Below that floor hex -> oklch -> hex stops round-tripping exactly.
+   So the two branches now render the same colour; the @supports split is one
+   colour expressed twice, not a second opinion about the palette.
+   Check it with: python3 tools/brand_drift.py
+   The alpha on --border/--border-strong is deliberate: the hex fallback is
+   opaque, the oklch branch is translucent. */
 :root{
   --bg-body:#07090c;
   --bg-surface:#0a0d11;
@@ -125,18 +133,18 @@
   --font-display:'Space Grotesk',Manrope,system-ui,sans-serif;
   --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 }
-@supports (color:oklch(69% .17 232)){
+@supports (color:oklch(0% 0 0)){
   :root{
-    --bg-body:oklch(10.5% .012 250);
-    --bg-surface:oklch(12.5% .014 250);
-    --bg-card:oklch(14.5% .015 250);
-    --bg-chip:oklch(20% .02 250);
-    --fg:oklch(97% .008 240);
-    --fg-muted:oklch(69% .025 245);
-    --primary:oklch(69% .17 232);
-    --primary-fg:oklch(11% .015 250);
-    --border:oklch(30% .025 245/.7);
-    --border-strong:oklch(36% .03 245/.8);
+    --bg-body:oklch(13.86% 0.0077 255.5);
+    --bg-surface:oklch(15.77% 0.0099 255.69);
+    --bg-card:oklch(17.63% 0.014 258.36);
+    --bg-chip:oklch(20.06% 0.0201 248.86);
+    --fg:oklch(96.98% 0.0083 236.56);
+    --fg-muted:oklch(68.91% 0.0249 246.17);
+    --primary:oklch(68.49% 0.1472 246.91);
+    --primary-fg:oklch(12.61% 0.0122 248.87);
+    --border:oklch(26.1% 0.0244 253.72 / .7);
+    --border-strong:oklch(32.81% 0.0297 252.59 / .8);
   }
 }
 html[data-theme="light"]{
@@ -159,18 +167,18 @@ html[data-theme="light"]{
   --font-display:'Space Grotesk',Manrope,system-ui,sans-serif;
   --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 }
-@supports (color:oklch(52% .16 245)){
+@supports (color:oklch(0% 0 0)){
   html[data-theme="light"]{
-    --bg-body:oklch(98% .004 250);
+    --bg-body:oklch(98.12% 0.0034 247.86);
     --bg-surface:oklch(100% 0 0);
     --bg-card:oklch(100% 0 0);
-    --bg-chip:oklch(95.5% .008 250);
-    --fg:oklch(20% .02 250);
-    --fg-muted:oklch(48% .022 248);
-    --primary:oklch(52% .16 245);
-    --primary-fg:oklch(99% 0 0);
-    --border:oklch(90% .012 248);
-    --border-strong:oklch(83% .016 248);
+    --bg-chip:oklch(95.95% 0.008 253.85);
+    --fg:oklch(17.86% 0.0181 248.87);
+    --fg-muted:oklch(49.43% 0.0289 252.11);
+    --primary:oklch(53.4% 0.1537 251.84);
+    --primary-fg:oklch(100% 0 0);
+    --border:oklch(91.33% 0.0115 252.09);
+    --border-strong:oklch(85.29% 0.0177 248.04);
   }
 }
 

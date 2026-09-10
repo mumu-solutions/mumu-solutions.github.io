@@ -1,0 +1,152 @@
+name: Brand drift
+
+# Watches the brand system in mumu-solutions/mumu-branding and re-checks this
+# site against it. The brand repo is private and this workflow lives in the
+# consumer, so it polls rather than being pushed to: every four hours it reads
+# the tip of main and the newest tag, and audits the site against whichever is
+# newer.
+#
+# The rolling issue is the state. There is no cache file to go stale: if drift
+# exists the issue is open and current, if it does not the issue is closed.
+# That makes the workflow idempotent — re-running it never double-reports.
+#
+# Requires one secret: BRAND_READ_PAT, a fine-grained token with read access to
+# Contents and Metadata on mumu-solutions/mumu-branding. The repository's own
+# GITHUB_TOKEN cannot read another private repo.
+
+on:
+  schedule:
+    # every 4 hours. GitHub disables cron on repos with 60 days of no activity —
+    # if this stops firing, that is why.
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Brand ref to audit against (blank = newest tag)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: brand-drift
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve the brand ref
+        id: ref
+        env:
+          GH_TOKEN: ${{ secrets.BRAND_READ_PAT }}
+          # Never interpolate an input into a run: script — it is shell source.
+          # Pass it as an environment variable and quote every expansion.
+          INPUT_REF: ${{ inputs.ref }}
+          REPO: mumu-solutions/mumu-branding
+        run: |
+          set -euo pipefail
+          REF="$INPUT_REF"
+          if [ -n "$REF" ]; then
+            # A ref is a branch, tag or sha. Anything else is someone trying
+            # something, and a bad ref would reach a shell and an API path.
+            printf '%s' "$REF" | grep -Eq '^[A-Za-z0-9._/-]{1,100}$' || {
+              echo "::error::refusing ref '$REF' — expected only [A-Za-z0-9._/-]"; exit 1; }
+          else
+            REF=$(gh api "repos/$REPO/tags" --jq '.[0].name // ""')
+            [ -z "$REF" ] && REF=main
+          fi
+          printf 'ref=%s\n' "$REF" >> "$GITHUB_OUTPUT"
+          printf 'main_sha=%s\n' "$(gh api "repos/$REPO/commits/main" --jq '.sha[0:7]')" >> "$GITHUB_OUTPUT"
+          echo "Auditing against $REPO@$REF"
+
+      - name: Check the site against the brand
+        id: drift
+        env:
+          GH_TOKEN: ${{ secrets.BRAND_READ_PAT }}
+          REF: ${{ steps.ref.outputs.ref }}
+        run: |
+          set +e
+          python3 tools/brand_drift.py --ref "$REF" --json > drift.json
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+          python3 tools/brand_drift.py --ref "$REF" | tee drift.txt
+
+      - name: Write the report
+        id: report
+        run: |
+          python3 - <<'PY' > report.md
+          import json, os
+          d = json.load(open('drift.json'))
+          m, f = d['meta'], d['findings']
+          errs = [x for x in f if x['level'] == 'ERROR']
+          warns = [x for x in f if x['level'] == 'WARN']
+          infos = [x for x in f if x['level'] == 'INFO']
+          print(f"The site was audited against **{m['repo']}@{m['ref']}** (`{m['ref_head']}`), "
+                f"reading **{m['brand_source']}**"
+                + (f", brand version **{m['brand_version']}**" if m.get('brand_version') else "") + ".\n")
+          print(f"{len(errs)} blocking, {len(warns)} drifting, {len(infos)} noted.\n")
+          for title, items in (("Blocking — the site contradicts the brand", errs),
+                               ("Drifting — allowed to differ, someone should decide", warns),
+                               ("Noted", infos)):
+              if not items:
+                  continue
+              print(f"### {title}\n")
+              for x in items:
+                  print(f"- **[{x['check']}]** {x['message']}")
+                  if x.get('fix'):
+                      print(f"  ```css\n  {x['fix']}\n  ```")
+              print()
+          print("<sub>Colour, format and token checks are computed by "
+                "`tools/brand_drift.py`. Voice, logo usage and copy quality need the "
+                "`site-brand-guardian` agent — this workflow does not judge those.</sub>")
+          PY
+          echo "empty=$([ -s report.md ] && echo no || echo yes)" >> "$GITHUB_OUTPUT"
+
+      - name: Open, update or close the rolling issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          TITLE: 'Brand drift — site vs mumu-branding'
+          DRIFTED: ${{ steps.drift.outputs.exit }}
+          REF: ${{ steps.ref.outputs.ref }}
+        run: |
+          set -euo pipefail
+          gh label create brand-drift --color 3FA0EF \
+            --description 'Site diverges from the mumu-branding brand system' 2>/dev/null || true
+
+          NUM=$(gh issue list --repo "$REPO" --label brand-drift --state open \
+                  --json number --jq '.[0].number // ""')
+
+          if [ "$DRIFTED" = "0" ]; then
+            if [ -n "$NUM" ]; then
+              gh issue comment "$NUM" --repo "$REPO" \
+                --body "Resolved: no drift against \`$REF\`. Closing."
+              gh issue close "$NUM" --repo "$REPO"
+              echo "Closed #$NUM — site matches the brand."
+            else
+              echo "No drift, no open issue. Nothing to do."
+            fi
+            exit 0
+          fi
+
+          BODY=$(cat report.md)
+          if [ -n "$NUM" ]; then
+            gh issue edit "$NUM" --repo "$REPO" --body "$BODY"
+            echo "Updated #$NUM"
+          else
+            gh issue create --repo "$REPO" --title "$TITLE" \
+              --label brand-drift --body "$BODY"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: brand-drift-report
+          path: |
+            drift.json
+            drift.txt
+            report.md
