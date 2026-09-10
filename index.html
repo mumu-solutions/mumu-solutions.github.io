@@ -58,8 +58,10 @@
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="sitemap" type="application/xml" href="sitemap.xml">
 
-<!-- Fonts are self-hosted: no third-party request, no DNS/TLS round trip,
-     nothing to reconcile with the "we don't track you" statement below. -->
+<!-- Fonts are self-hosted: no third-party request, no DNS/TLS round trip.
+     The page itself loads nothing from another host; the Cloudflare Web
+     Analytics beacon is injected at the edge, and the privacy notice at the
+     bottom of this file describes it. -->
 <link rel="preload" href="fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/space-grotesk-600-latin.woff2" as="font" type="font/woff2" crossorigin>
 
@@ -374,14 +376,19 @@ html[data-theme="light"] .hero-grid{opacity:.22}
 
 /* privacy dialog */
 dialog{
-  max-width:34rem;padding:2rem;color:var(--fg);
+  max-width:38rem;max-height:min(85vh,44rem);overflow:auto;
+  padding:2rem;color:var(--fg);
   background:var(--bg-card);border:1px solid var(--border-strong);
   border-radius:var(--radius);box-shadow:var(--shadow);
 }
 dialog::backdrop{background:#000a;backdrop-filter:blur(2px)}
 dialog h2{font-size:1.5rem}
-dialog p{margin-top:1rem;color:var(--fg-muted);font-size:.9375rem}
-dialog .btn{margin-top:1.75rem}
+dialog p{margin-top:1.15rem;color:var(--fg-muted);font-size:.9375rem;line-height:1.65}
+dialog strong{color:var(--fg);font-weight:600}
+dialog code{font-family:var(--font-mono);font-size:.8125rem;color:var(--fg)}
+dialog a{color:var(--primary);text-decoration:underline;text-underline-offset:3px}
+dialog .updated{margin-top:1.5rem;font-size:.8125rem;opacity:.75}
+dialog .btn{margin-top:1.5rem}
 
 /* reveal on scroll — decorative only, and disabled for reduced motion */
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
@@ -771,12 +778,20 @@ dialog .btn{margin-top:1.75rem}
 <dialog id="privacy">
   <h2 data-lang="pt">Sua privacidade, por princípio.</h2>
   <h2 data-lang="en">Privacy by principle.</h2>
-  <p data-lang="pt">Este site não usa analytics, publicidade ou cookies de rastreamento — e não carrega nenhum recurso de terceiros. As fontes e imagens são servidas pelo próprio site.</p>
-  <p data-lang="en">This site uses no analytics, advertising, or tracking cookies — and loads no third-party resources. Fonts and images are served by the site itself.</p>
-  <p data-lang="pt">Guardamos apenas a sua escolha de tema e de idioma, no armazenamento local deste dispositivo. Nada é enviado para nenhum servidor e você pode apagar tudo limpando os dados do site no navegador.</p>
-  <p data-lang="en">We store only your theme and language choice, in this device’s local storage. Nothing is sent to any server, and you can erase it by clearing this site’s data in your browser.</p>
-  <p data-lang="pt">Em conformidade com a LGPD e o GDPR, qualquer uso futuro de armazenamento opcional dependerá do seu consentimento.</p>
-  <p data-lang="en">In line with LGPD and GDPR, any future optional storage will require your consent.</p>
+  <p data-lang="pt"><strong>O site.</strong> Não usamos cookies, publicidade nem scripts de rastreamento. As fontes e as imagens são servidas pelo próprio domínio, sem CDNs de terceiros.</p>
+  <p data-lang="en"><strong>The site.</strong> We use no cookies, advertising, or tracking scripts. Fonts and images are served from this domain itself, with no third-party CDNs.</p>
+
+  <p data-lang="pt"><strong>No seu dispositivo.</strong> Guardamos apenas a sua escolha de tema e de idioma, no armazenamento local do navegador. Esses dados não saem do seu dispositivo e podem ser apagados limpando os dados do site.</p>
+  <p data-lang="en"><strong>On your device.</strong> We store only your theme and language choice, in your browser’s local storage. That data never leaves your device, and clearing this site’s data removes it.</p>
+
+  <p data-lang="pt"><strong>Cloudflare.</strong> O domínio é entregue pela Cloudflare, que atua como CDN e camada de segurança e, para isso, processa dados de conexão — incluindo o endereço IP. A Cloudflare também insere o Web Analytics, um script de medição carregado de <code>static.cloudflareinsights.com</code>. Segundo a documentação da Cloudflare, ele não usa cookies nem armazenamento local para fins de analytics, não faz fingerprinting e não acompanha visitantes entre sites; produz apenas números agregados: visitas, páginas mais acessadas, país, tipo de dispositivo, origem do acesso e métricas de desempenho.</p>
+  <p data-lang="en"><strong>Cloudflare.</strong> This domain is delivered by Cloudflare, which acts as CDN and security layer and therefore processes connection data — including your IP address. Cloudflare also injects Web Analytics, a measurement script loaded from <code>static.cloudflareinsights.com</code>. Per Cloudflare’s documentation it uses no cookies or client-side storage for analytics, performs no fingerprinting, and does not follow visitors across sites; it produces aggregate figures only: visits, top pages, country, device type, referrer, and performance metrics.</p>
+
+  <p data-lang="pt"><strong>Seus direitos.</strong> Não vendemos nem compartilhamos dados pessoais para publicidade. Em conformidade com a LGPD e o GDPR, qualquer uso futuro de armazenamento opcional dependerá do seu consentimento, e pedidos de acesso, correção ou exclusão podem ser enviados para <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+  <p data-lang="en"><strong>Your rights.</strong> We do not sell or share personal data for advertising. In line with LGPD and GDPR, any future optional storage will require your consent, and requests for access, correction, or deletion can be sent to <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+
+  <p class="updated" data-lang="pt">Atualizado em 10 de setembro de 2026.</p>
+  <p class="updated" data-lang="en">Last updated 10 September 2026.</p>
   <button type="button" class="btn btn-primary" id="privacyClose">
     <span data-lang="pt">Fechar</span><span data-lang="en">Close</span>
   </button>
