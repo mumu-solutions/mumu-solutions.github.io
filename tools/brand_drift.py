@@ -464,25 +464,34 @@ def run(site_dir: Path, repo: str, ref: str):
     # dist/assets, and logo.yaml assigns those raster exports to specific slots
     # — so "the site uses a PNG" is not a finding. "The site uses a PNG the
     # brand did not generate, or generated differently" is.
-    dist = gh_json_safe(f"repos/{repo}/contents/dist/assets?ref={ref}")
-    if isinstance(dist, list) and dist:
-        by_name = {f["name"]: f for f in dist}
+    # Index everything the brand publishes under dist/ — since v0.4.0 the
+    # sanctioned handoff is dist/brand-kit/ as well as dist/assets, and
+    # USAGE.md sends the site header to an SVG that only exists in the kit.
+    tree = gh_json_safe(f"repos/{repo}/git/trees/{ref}?recursive=1")
+    dist = [b for b in (tree or {}).get("tree", [])
+            if b.get("type") == "blob" and b["path"].startswith("dist/")]
+    if dist:
+        by_name = {}
+        for b in dist:
+            by_name.setdefault(b["path"].rsplit("/", 1)[-1], []).append(b)
         local = sorted((site_dir / "images" / "brand").glob("*")) if (site_dir / "images" / "brand").is_dir() else []
         if not local:
             add(WARN, "asset-provenance",
-                f"the brand publishes {len(by_name)} generated assets in dist/assets at {ref}, "
-                f"but the site copies none of them into images/brand/")
+                f"the brand publishes {len(dist)} files under dist/ at {ref}, but the site "
+                f"copies none of them into images/brand/")
         for f in local:
-            entry = by_name.get(f.name)
-            if not entry:
+            entries = by_name.get(f.name)
+            size = f.stat().st_size
+            if not entries:
                 add(WARN, "asset-provenance",
-                    f"images/brand/{f.name} is not in the brand's dist/assets at {ref} — "
+                    f"images/brand/{f.name} is not published anywhere under dist/ at {ref} — "
                     f"either renamed here or dropped there")
-            elif entry.get("size") != f.stat().st_size:
+            elif not any(e.get("size") == size for e in entries):
+                where = entries[0]["path"]
                 add(ERROR, "asset-provenance",
-                    f"images/brand/{f.name} is {f.stat().st_size} bytes, the brand's is "
-                    f"{entry['size']} — the copy is stale or was edited by hand",
-                    f"re-copy from dist/assets at {ref}")
+                    f"images/brand/{f.name} is {size} bytes, the brand's is "
+                    f"{entries[0]['size']} ({where}) — the copy is stale or was edited by hand",
+                    f"re-copy from {where} at {ref}")
         manifest = site_dir / "images" / "brand" / "MANIFEST.json"
         if manifest.exists() and brand["version"]:
             try:

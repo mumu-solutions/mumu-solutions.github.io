@@ -2,124 +2,149 @@
   "files": {
     "apple-touch-icon-180.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "favicon-16.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "favicon-32.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "favicon-48.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "linkedin-company-en.png": {
       "source": "brandlib/banner.py",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "linkedin-company-pt.png": {
       "source": "brandlib/banner.py",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "linkedin-logo-300.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "linkedin-personal-en.png": {
       "source": "brandlib/banner.py",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "linkedin-personal-pt.png": {
       "source": "brandlib/banner.py",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-128.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-256.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-48.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-512.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-dark-128.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-dark-256.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-dark-48.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-dark-512.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-light-128.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-light-256.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-light-48.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-mark-light-512.png": {
       "source": "brand/source/logo/mark-ascend.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-wordmark-480.png": {
       "source": "brand/source/logo/wordmark.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-wordmark-960.png": {
       "source": "brand/source/logo/wordmark.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-wordmark-dark-480.png": {
       "source": "brand/source/logo/wordmark.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-wordmark-dark-960.png": {
       "source": "brand/source/logo/wordmark.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-wordmark-light-480.png": {
       "source": "brand/source/logo/wordmark.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "logo-wordmark-light-960.png": {
       "source": "brand/source/logo/wordmark.svg",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "og-en.png": {
       "note": "real PNG; the site's og-image.png was JPEG data",
       "source": "brandlib/banner.py",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "og-pt.png": {
       "note": "real PNG; the site's og-image.png was JPEG data",
       "source": "brandlib/banner.py",
-      "version": "0.3.0"
+      "version": "0.4.0"
+    },
+    "plate-classification.png": {
+      "note": "manual plate",
+      "source": "brandlib/plates.py",
+      "version": "0.4.0"
+    },
+    "plate-logo-variants.png": {
+      "note": "manual plate",
+      "source": "brandlib/plates.py",
+      "version": "0.4.0"
+    },
+    "plate-logo.png": {
+      "note": "manual plate",
+      "source": "brandlib/plates.py",
+      "version": "0.4.0"
+    },
+    "plate-palette-dark.png": {
+      "note": "manual plate",
+      "source": "brandlib/plates.py",
+      "version": "0.4.0"
+    },
+    "plate-palette-light.png": {
+      "note": "manual plate",
+      "source": "brandlib/plates.py",
+      "version": "0.4.0"
     }
   },
   "selected_mark": "mark-ascend",
   "selected_secondary": "wordmark",
-  "version": "0.3.0"
+  "version": "0.4.0"
 }
