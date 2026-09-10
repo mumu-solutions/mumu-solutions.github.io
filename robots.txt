@@ -1,64 +1,51 @@
-# robots.txt - MUMU Solutions SEO Configuration (Restricted)
-# Last updated: March 2026
-# This is a RESTRICTIVE configuration - only essential pages are allowed
+# robots.txt — MUMU Solutions
+# Updated: 2026-09-10
+#
+# Policy: only the homepage is indexable. Everything else is denied by the
+# Disallow below and opened back up case by case.
+#
+# Two things must stay allowed for the site to work correctly in search and
+# in social previews:
+#   * /images/ and /fonts/ — Google renders the page before indexing it. A
+#     crawler that cannot fetch the logo, the share image, or the webfonts
+#     sees a broken page and judges it accordingly.
+#   * the social crawlers below — they fetch og-image.png directly. Blocked,
+#     a link shared on WhatsApp or LinkedIn renders as a grey box.
 
-# Default rules for all search engines (VERY RESTRICTIVE)
 User-agent: *
 Allow: /$
 Allow: /index.html
-Allow: /images/logo.png
+Allow: /images/
+Allow: /fonts/
 Allow: /sitemap.xml
 Disallow: /
-Disallow: /temp/
-Disallow: /venv/
-Disallow: /*.pdf$
-Disallow: /*.env$
-Disallow: /.*\.php$
-Disallow: /admin/
-Disallow: /config/
-Disallow: /.well-known/
-Disallow: /.git/
-Disallow: /.gitignore
-Disallow: /node_modules/
-Disallow: /__pycache__/
 
-# Crawl delay (seconds)
-Crawl-delay: 30
-
-# Request rate - max 20 requests per 60 seconds
-Request-rate: 20/60
-
-# Sitemap location
-Sitemap: https://mumu.solutions/sitemap.xml
-
-# Google specific rules
-User-agent: Googlebot
+# Social crawlers need the Open Graph image, not just the page.
+User-agent: facebookexternalhit
 Allow: /$
 Allow: /index.html
 Allow: /images/
-Allow: /sitemap.xml
-Disallow: /admin/
-Disallow: /config/
-Disallow: /temp/
-Disallow: /venv/
-Crawl-delay: 20
-
-# Google Image Bot
-User-agent: Googlebot-Image
-Allow: /images/logo.png
 Disallow: /
 
-# Bing specific rules
-User-agent: Bingbot
+User-agent: Twitterbot
 Allow: /$
 Allow: /index.html
 Allow: /images/
-Disallow: /admin/
-Disallow: /temp/
-Disallow: /venv/
-Crawl-delay: 30
+Disallow: /
 
-# Block aggressive and unwanted bots
+User-agent: LinkedInBot
+Allow: /$
+Allow: /index.html
+Allow: /images/
+Disallow: /
+
+User-agent: WhatsApp
+Allow: /$
+Allow: /index.html
+Allow: /images/
+Disallow: /
+
+# SEO backlink crawlers — no value to this site, real bandwidth cost.
 User-agent: AhrefsBot
 Disallow: /
 
@@ -71,35 +58,9 @@ Disallow: /
 User-agent: DotBot
 Disallow: /
 
-User-agent: Screaming Frog
-Disallow: /
-
 User-agent: rogerbot
 Disallow: /
 
-User-agent: curl
-Disallow: /
-
-User-agent: wget
-Disallow: /
-
-# Allow essential social media crawlers only
-User-agent: facebookexternalhit
-Allow: /$
-Allow: /index.html
-Disallow: /admin/
-
-User-agent: Twitterbot
-Allow: /$
-Allow: /index.html
-Disallow: /admin/
-
-User-agent: LinkedInBot
-Allow: /$
-Allow: /index.html
-Disallow: /admin/
-
-# Slack bot
-User-agent: Slurp
-Allow: /
-Disallow: /admin/
+# Canonical host is www — it must match CNAME, <link rel="canonical">,
+# og:url and every <loc> in the sitemap, or ranking signal is split in two.
+Sitemap: https://www.mumu.solutions/sitemap.xml
