@@ -38,7 +38,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Resolve the brand ref
         id: ref
@@ -103,8 +103,13 @@ jobs:
           print("<sub>Colour, format and token checks are computed by "
                 "`tools/brand_drift.py`. Voice, logo usage and copy quality need the "
                 "`site-brand-guardian` agent — this workflow does not judge those.</sub>")
+          # The rolling issue tracks anything a person still has to decide, so
+          # warnings count. The script's exit code stays errors-only, because
+          # that is the CI-failure question, not the should-anyone-look question.
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write(f"actionable={'yes' if (errs or warns) else 'no'}\n")
+              out.write(f"errors={len(errs)}\nwarnings={len(warns)}\n")
           PY
-          echo "empty=$([ -s report.md ] && echo no || echo yes)" >> "$GITHUB_OUTPUT"
 
       - name: Publish the report to the run summary
         # Always, and before any issue work: the summary costs nothing, cannot
@@ -118,7 +123,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           TITLE: 'Brand drift — site vs mumu-branding'
-          DRIFTED: ${{ steps.drift.outputs.exit }}
+          DRIFTED: ${{ steps.report.outputs.actionable }}
           REF: ${{ steps.ref.outputs.ref }}
         run: |
           set -euo pipefail
@@ -127,7 +132,7 @@ jobs:
           # first and degrade to the summary rather than dying on it.
           if [ "$(gh repo view "$REPO" --json hasIssuesEnabled --jq .hasIssuesEnabled)" != "true" ]; then
             echo "::notice::Issues are disabled on $REPO — the report is in the run summary."
-            if [ "$DRIFTED" != "0" ]; then
+            if [ "$DRIFTED" = "yes" ]; then
               echo "::warning::The site is drifting from the brand at $REF. Enable Issues (gh repo edit $REPO --enable-issues) to get a tracked, rolling report instead of a red run."
               exit 1
             fi
@@ -137,13 +142,15 @@ jobs:
           gh label create brand-drift --color 3FA0EF \
             --description 'Site diverges from the mumu-branding brand system' 2>/dev/null || true
 
+          # `|| true`: under `set -e`, a filter on a label the API does not know
+          # would kill the step before it can create the first issue.
           NUM=$(gh issue list --repo "$REPO" --label brand-drift --state open \
-                  --json number --jq '.[0].number // ""')
+                  --json number --jq '.[0].number // ""' 2>/dev/null || true)
 
-          if [ "$DRIFTED" = "0" ]; then
+          if [ "$DRIFTED" = "no" ]; then
             if [ -n "$NUM" ]; then
               gh issue comment "$NUM" --repo "$REPO" \
-                --body "Resolved: no drift against \`$REF\`. Closing."
+                --body "Resolved: nothing left to decide against \`$REF\`. Closing."
               gh issue close "$NUM" --repo "$REPO"
               echo "Closed #$NUM — site matches the brand."
             else
@@ -161,7 +168,7 @@ jobs:
               --label brand-drift --body "$BODY"
           fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: brand-drift-report
