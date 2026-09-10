@@ -10,7 +10,7 @@
 
   <url>
     <loc>https://www.mumu.solutions/</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -19,12 +19,12 @@
     </image:image>
   </url>
 
-  <url><loc>https://www.mumu.solutions/#home</loc><lastmod>2026-09-09</lastmod><priority>0.9</priority></url>
-  <url><loc>https://www.mumu.solutions/#about</loc><lastmod>2026-09-09</lastmod><priority>0.7</priority></url>
-  <url><loc>https://www.mumu.solutions/#solutions</loc><lastmod>2026-09-09</lastmod><priority>0.9</priority></url>
-  <url><loc>https://www.mumu.solutions/#industries</loc><lastmod>2026-09-09</lastmod><priority>0.8</priority></url>
-  <url><loc>https://www.mumu.solutions/#products</loc><lastmod>2026-09-09</lastmod><priority>0.7</priority></url>
-  <url><loc>https://www.mumu.solutions/#program</loc><lastmod>2026-09-09</lastmod><priority>0.8</priority></url>
-  <url><loc>https://www.mumu.solutions/#contact</loc><lastmod>2026-09-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.mumu.solutions/#home</loc><lastmod>2026-09-10</lastmod><priority>0.9</priority></url>
+  <url><loc>https://www.mumu.solutions/#about</loc><lastmod>2026-09-10</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.mumu.solutions/#solutions</loc><lastmod>2026-09-10</lastmod><priority>0.9</priority></url>
+  <url><loc>https://www.mumu.solutions/#industries</loc><lastmod>2026-09-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.mumu.solutions/#products</loc><lastmod>2026-09-10</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.mumu.solutions/#program</loc><lastmod>2026-09-10</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.mumu.solutions/#contact</loc><lastmod>2026-09-10</lastmod><priority>0.8</priority></url>
 
 </urlset>

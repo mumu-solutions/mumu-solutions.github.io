@@ -22,7 +22,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>MUMU Solutions — Tecnologia para crescer</title>
+<!-- The <title> is the search result, so it names the category someone would
+     actually type. og:title below keeps the slogan, because a share in
+     WhatsApp or LinkedIn is brand context, not a search query. -->
+<title>MUMU Solutions — Consultoria e engenharia de tecnologia</title>
 <meta name="description" content="Consultoria, engenharia, cloud e segurança para empresas prontas para crescer. Estratégia e execução que transformam desafios em soluções que escalam.">
 <meta name="author" content="MUMU Solutions">
 <link rel="canonical" href="https://www.mumu.solutions/">
@@ -33,8 +36,9 @@
      link for the English version. If English ever needs to rank on its own,
      it needs a real second document (/en/), not an annotation. -->
 <meta name="robots" content="index, follow, max-image-preview:large">
-<meta name="theme-color" content="#07090c">
 <meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#07090c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f9fb" media="(prefers-color-scheme: light)">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MUMU Solutions">
@@ -51,6 +55,7 @@
 <meta name="twitter:title" content="MUMU Solutions — Tecnologia para crescer">
 <meta name="twitter:description" content="Estratégia, engenharia e operação para transformar desafios complexos em soluções simples, seguras e prontas para crescer.">
 <meta name="twitter:image" content="https://www.mumu.solutions/images/og-image.png">
+<meta name="twitter:image:alt" content="MUMU Solutions — Construa hoje. Escale amanhã.">
 
 <link rel="icon" href="images/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
@@ -797,21 +802,61 @@ dialog .btn{margin-top:1.5rem}
   </button>
 </dialog>
 
+<!--
+  Structured data. Only what is visible on this page is marked up here — no
+  address, no phone, no opening hours, because none are published.
+
+  The type is Organization, deliberately. ProfessionalService looks like the
+  obvious fit for a consultancy, but schema.org deprecated it and files it
+  under LocalBusiness, which promises a place customers visit. Add
+  LocalBusiness (with address and geo) only when there is a real office.
+-->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "MUMU Solutions",
-  "alternateName": "MUMU",
-  "url": "https://www.mumu.solutions/",
-  "logo": "https://www.mumu.solutions/images/logo.png",
-  "image": "https://www.mumu.solutions/images/og-image.png",
-  "description": "Consultoria, engenharia, cloud e segurança para empresas prontas para crescer.",
-  "email": "fale.com@mumu.solutions",
-  "slogan": "Tecnologia para crescer",
-  "areaServed": "BR",
-  "knowsLanguage": ["pt-BR", "en"],
-  "sameAs": ["https://www.linkedin.com/company/mumu-solutions/"]
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.mumu.solutions/#organizacao",
+      "name": "MUMU Solutions",
+      "alternateName": "MUMU",
+      "url": "https://www.mumu.solutions/",
+      "logo": "https://www.mumu.solutions/images/logo.png",
+      "image": "https://www.mumu.solutions/images/og-image.png",
+      "description": "Consultoria, engenharia, cloud e segurança para empresas prontas para crescer.",
+      "slogan": "Tecnologia para crescer",
+      "email": "fale.com@mumu.solutions",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "sales",
+        "email": "fale.com@mumu.solutions",
+        "availableLanguage": ["pt-BR", "en"]
+      },
+      "areaServed": { "@type": "Country", "name": "Brasil" },
+      "knowsLanguage": ["pt-BR", "en"],
+      "knowsAbout": [
+        "Arquitetura de software",
+        "Qualidade de código",
+        "Desenvolvimento web e mobile",
+        "APIs e integrações",
+        "Cloud e infraestrutura",
+        "DevOps",
+        "SRE",
+        "FinOps",
+        "Segurança da informação",
+        "LGPD"
+      ],
+      "sameAs": ["https://www.linkedin.com/company/mumu-solutions/"]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.mumu.solutions/#site",
+      "url": "https://www.mumu.solutions/",
+      "name": "MUMU Solutions",
+      "inLanguage": ["pt-BR", "en"],
+      "publisher": { "@id": "https://www.mumu.solutions/#organizacao" }
+    }
+  ]
 }
 </script>
 
