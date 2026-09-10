@@ -245,17 +245,30 @@ section{scroll-margin-top:var(--nav-h)}
   backdrop-filter:blur(14px);
 }
 .site-header .container{display:flex;align-items:center;gap:1rem;height:100%}
-/* Wordmark at 40px tall — brand kit USAGE.md sets 40px for the site-header
-   slot and says use SVG wherever possible: it is 765 bytes against 9 KB for
-   the PNG, and sharp at any pixel ratio, so there is no 2x variant to pick.
-   `-light` is the light-ink artwork for dark grounds, `-dark` the reverse.
-   Clear space is 0.25x the mark height (10px) on all sides. */
+/* Wordmark at 40px tall — the brand kit's site-header slot and its 40px
+   minimum. USAGE.md says "SVG sempre que possível", and that qualifier fails
+   here: the kit's wordmark SVG draws its text as live <text font-family="Space
+   Grotesk, Manrope…"> with no embedded font, and an SVG used as a background
+   image is isolated from this page's @font-face — measured, the brand faces
+   substitute (Manrope's "Solutions" is 111.2px, what actually paints is 100px).
+   The brand's own PNG export was rasterised server-side with the real faces, so
+   it is the variant that shows the brand's typography. Revisit when the kit
+   outlines its text.
+   `-light-` is light ink for dark grounds, `-dark-` the reverse.
+   Clear space is 0.25x the mark height (10px) on all sides. background-size
+   uses `auto 40px` so the 248:48 artwork is never compressed. */
 .brand{
   display:block;flex:none;width:206px;height:40px;padding:10px;box-sizing:content-box;
-  background:url(images/brand/wordmark-light.svg) center/206px 40px no-repeat;
+  background:url(images/brand/logo-wordmark-light-480.png) center/auto 40px no-repeat;
 }
-html[data-theme="light"] .brand{background-image:url(images/brand/wordmark-dark.svg)}
-@media (max-width:420px){ .brand{width:165px;height:32px;background-size:165px 32px;padding:8px} }
+html[data-theme="light"] .brand{background-image:url(images/brand/logo-wordmark-dark-480.png)}
+@media (min-resolution:1.5dppx){
+  .brand{background-image:url(images/brand/logo-wordmark-light-960.png)}
+  html[data-theme="light"] .brand{background-image:url(images/brand/logo-wordmark-dark-960.png)}
+}
+/* No small-screen shrink: logo.yaml's min_size_px is 40 and USAGE.md states it
+   flatly. The 206px lockup plus clear space fits a 320px viewport. */
+@media (max-width:420px){ .brand{padding:10px 8px} }
 .nav{display:flex;align-items:center;gap:1.5rem;margin-left:auto}
 .nav a{color:var(--fg-muted);font-size:.9375rem;transition:color .15s}
 .nav a:hover,.nav a.active{color:var(--fg)}
@@ -393,13 +406,15 @@ html[data-theme="light"] .hero-grid{opacity:.22}
 #program{
   background:var(--primary);color:var(--primary-fg);
   --fg:var(--primary-fg);
-  --fg-muted:color-mix(in srgb,var(--primary-fg) 78%,transparent);
+  /* 90%, not 78%: on the light theme's #0d6ec2 band, 78% white composites to
+     3.81:1 — under the 4.5 floor color.yaml commits to. 90% reaches 4.5:1. */
+  --fg-muted:color-mix(in srgb,var(--primary-fg) 90%,transparent);
   --border:color-mix(in srgb,var(--primary-fg) 22%,transparent);
   --bg-card:transparent;
 }
-#program .eyebrow{color:var(--primary-fg);opacity:.8}
+#program .eyebrow{color:var(--primary-fg)}          /* opacity .8 was 3.93:1 */
 #program .cell-top{color:var(--primary-fg)}
-#program .cell-num{font-size:1.5rem;font-family:var(--font-display);color:var(--primary-fg);opacity:.55}
+#program .cell-num{font-size:1.5rem;font-family:var(--font-display);color:var(--primary-fg)}  /* opacity .55 was 2.65:1 on 01/02/03, which are content */
 
 /* contact + footer */
 #contact h2{font-size:clamp(2rem,5.5vw,3.75rem);max-width:46rem}
@@ -512,7 +527,8 @@ dialog .btn{margin-top:1.5rem}
         </a>
       </div>
 
-      <p class="hero-note">Consulting · Engineering · Operations</p>
+      <p class="hero-note" data-lang="pt">Consultoria · Engenharia · Operação</p>
+      <p class="hero-note" data-lang="en">Consulting · Engineering · Operations</p>
     </div>
   </section>
 
