@@ -106,6 +106,13 @@ jobs:
           PY
           echo "empty=$([ -s report.md ] && echo no || echo yes)" >> "$GITHUB_OUTPUT"
 
+      - name: Publish the report to the run summary
+        # Always, and before any issue work: the summary costs nothing, cannot
+        # fail, and means the report survives even when the issue path is
+        # unavailable. The first real run of this workflow failed precisely
+        # there — Issues are disabled on this repo — and took the report with it.
+        run: cat report.md >> "$GITHUB_STEP_SUMMARY"
+
       - name: Open, update or close the rolling issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -115,6 +122,18 @@ jobs:
           REF: ${{ steps.ref.outputs.ref }}
         run: |
           set -euo pipefail
+
+          # gh issue * fails outright on a repo with Issues turned off, so ask
+          # first and degrade to the summary rather than dying on it.
+          if [ "$(gh repo view "$REPO" --json hasIssuesEnabled --jq .hasIssuesEnabled)" != "true" ]; then
+            echo "::notice::Issues are disabled on $REPO — the report is in the run summary."
+            if [ "$DRIFTED" != "0" ]; then
+              echo "::warning::The site is drifting from the brand at $REF. Enable Issues (gh repo edit $REPO --enable-issues) to get a tracked, rolling report instead of a red run."
+              exit 1
+            fi
+            exit 0
+          fi
+
           gh label create brand-drift --color 3FA0EF \
             --description 'Site diverges from the mumu-branding brand system' 2>/dev/null || true
 

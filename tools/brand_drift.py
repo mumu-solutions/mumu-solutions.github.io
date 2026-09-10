@@ -148,17 +148,94 @@ def load_brand(repo, ref):
     return {"source": None, "tokens": {}, "version": None, "raw": ""}
 
 
-def parse_css_tokens(css):
-    """{scope: {token: {'hex':..., 'oklch':...}}} from a generated tokens.css."""
+def iter_rules(css):
+    """Yield (selector, declarations) for innermost rule blocks only.
+
+    Written as a brace scanner rather than a regex because both the brand's
+    tokens.css and this site nest their OKLCH branch inside `@supports (...){ }`.
+    A regex over `sel{body}` reads the at-rule line as the selector and swallows
+    the inner `:root{`, so the light OKLCH block lands in the same bucket as the
+    dark one and silently overwrites it — which is exactly the false "drift"
+    this function exists to avoid reporting.
+    """
+    depth, buf, stack = 0, [], []
+    i = 0
+    while i < len(css):
+        ch = css[i]
+        if ch == "{":
+            stack.append("".join(buf).strip())
+            buf = []
+            depth += 1
+        elif ch == "}":
+            body = "".join(buf)
+            sel = stack.pop() if stack else ""
+            depth -= 1
+            # a block containing declarations (not just nested blocks) is a rule
+            if "--" in body or ":" in body:
+                yield sel, body
+            buf = []
+        else:
+            buf.append(ch)
+        i += 1
+
+
+def scope_of(selector):
+    s = selector.lower()
+    if 'data-theme="light"' in s or "[data-theme=light]" in s:
+        return "light"
+    if 'data-theme="dark"' in s or "[data-theme=dark]" in s:
+        return "dark"
+    if ":root" in s or s in ("html", "body"):
+        return "root"
+    return None
+
+
+def collect_tokens(css):
+    """{scope: {token: {'hex':…, 'oklch':…, 'raw':…}}} — every token, not just colours."""
     out = {}
-    for sel, body in re.findall(r"([^{}]+)\{([^}]*)\}", css):
-        scope = "dark" if "dark" in sel else ("light" if "light" in sel else "root")
+    for sel, body in iter_rules(css):
+        scope = scope_of(sel)
+        if not scope:
+            continue
         bucket = out.setdefault(scope, {})
         for name, val in re.findall(r"(--[\w-]+)\s*:\s*([^;]+);", body):
             val = val.strip()
-            key = "hex" if val.startswith("#") else ("oklch" if val.startswith("oklch") else "other")
-            bucket.setdefault(name, {})[key] = val
+            slot = bucket.setdefault(name, {})
+            if val.startswith("#"):
+                slot["hex"] = val
+            elif val.startswith("oklch"):
+                slot["oklch"] = val
+            else:
+                slot["raw"] = val
     return out
+
+
+def parse_css_tokens(css):
+    return collect_tokens(css)
+
+
+def theme_identity(tokens):
+    """Which scope means dark and which means light, decided by the palette
+    rather than by selector names — a brand that goes light-first would put
+    light in `:root`, and comparing `:root` to `:root` would then be wrong."""
+    ident = {}
+    for scope, toks in tokens.items():
+        probe = toks.get("--bg-body") or toks.get("--bg-surface") or toks.get("--bg")
+        L = None
+        if probe and probe.get("hex"):
+            L = hex_to_oklch(probe["hex"])[0]
+        elif probe and probe.get("oklch"):
+            m = re.search(r"([\d.]+)%", probe["oklch"])
+            L = float(m.group(1)) if m else None
+        ident[scope] = None if L is None else ("dark" if L < 50 else "light")
+    return ident
+
+
+def normalize_value(v):
+    """`.5rem` and `0.5rem` are the same length; quoting and spacing in a font
+    stack are noise. Compare meaning, not keystrokes."""
+    v = v.lower().replace(" ", "").replace('"', "'").rstrip(";")
+    return re.sub(r"\b0+(\.\d)", r"\1", v)
 
 
 def parse_yaml_colors(text):
@@ -191,17 +268,11 @@ def css_version(css):
 
 # -------------------------------------------------------------------- site side
 def parse_site(html):
-    """Token blocks, declared fonts, and preloads as the page actually ships."""
-    scopes = {}
-    for sel, body in re.findall(r"(:root|html\[data-theme=\"[a-z]+\"\])\s*\{([^}]*)\}", html):
-        scope = "light" if "light" in sel else ("dark" if "dark" in sel else "root")
-        bucket = scopes.setdefault(scope, {})
-        for name, val in re.findall(r"(--[\w-]+)\s*:\s*([^;]+);", body):
-            val = val.strip()
-            if val.startswith("#"):
-                bucket.setdefault(name, {})["hex"] = val
-            elif val.startswith("oklch"):
-                bucket.setdefault(name, {})["oklch"] = val
+    """Token blocks, declared fonts, and preloads as the page actually ships.
+    Uses the same collector as the brand side so the two are symmetric — a
+    difference in parsing would show up as a difference in the palette."""
+    style = "\n".join(re.findall(r"<style>(.*?)</style>", html, re.S)) or html
+    scopes = collect_tokens(style)
     fams = {}
     for name, val in re.findall(r"(--font-[\w-]+)\s*:\s*([^;]+);", html):
         fams[name] = val.strip()
@@ -299,20 +370,36 @@ def run(site_dir: Path, repo: str, ref: str):
             f"site's blue could not be compared to the brand's")
 
     # -- check 3: token-by-token drift against the generated CSS --------------
+    # Align the two sides by which theme a scope *is*, never by what its
+    # selector is called.
     if brand["tokens"]:
+        b_ident, s_ident = theme_identity(brand["tokens"]), theme_identity(site["scopes"])
+        site_by_theme = {}
+        for scope, theme in s_ident.items():
+            if theme:
+                site_by_theme.setdefault(theme, {}).update(site["scopes"][scope])
+
         for scope, btokens in sorted(brand["tokens"].items()):
-            stokens = site["scopes"].get(scope, {})
+            theme = b_ident.get(scope)
+            if not theme:
+                add(INFO, "token-drift",
+                    f"could not tell whether the brand's `{scope}` block is the dark or the light "
+                    f"theme (no background token to measure), so it was not compared")
+                continue
+            stokens = site_by_theme.get(theme, {})
+            if not stokens:
+                add(WARN, "token-drift", f"the brand defines a {theme} theme; the site has no {theme} block")
+                continue
             for name, bval in sorted(btokens.items()):
                 key = name if name.startswith("--") else f"--{name}"
                 if key not in stokens:
-                    add(WARN, "token-drift", f"{scope} {key} exists in the brand but not on the site")
+                    add(WARN, "token-drift", f"{theme} {key} exists in the brand but not on the site")
                     continue
-                for kind in ("hex", "oklch"):
+                for kind in ("hex", "oklch", "raw"):
                     if bval.get(kind) and stokens[key].get(kind):
-                        b, s = bval[kind].lower().replace(" ", ""), stokens[key][kind].lower().replace(" ", "")
-                        if b != s:
+                        if normalize_value(bval[kind]) != normalize_value(stokens[key][kind]):
                             add(ERROR, "token-drift",
-                                f"{scope} {key} {kind}: site has {stokens[key][kind]}, brand has {bval[kind]}",
+                                f"{theme} {key}: site has {stokens[key][kind]}, brand has {bval[kind]}",
                                 f"{key}:{bval[kind]};")
 
     # -- check 4: typography families ----------------------------------------
