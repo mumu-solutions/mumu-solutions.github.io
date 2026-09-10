@@ -40,6 +40,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Node 24 (Active LTS) for the workflow, pinned by .nvmrc so the version
+      # lives in one place and `nvm use` picks up the same one locally.
+      # Nothing here calls node today — the steps below run python3 and gh — so
+      # this is a floor for whatever JS tooling arrives later, not a dependency.
+      - name: Use Node 24
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
       - name: Resolve the brand ref
         id: ref
         env:
