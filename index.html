@@ -17,7 +17,7 @@
 
   Check both with:  python3 ~/.claude/skills/static-site-audit/scripts/audit_site.py .
 -->
-<!-- brand-version: 0.4.0 — logo, favicons and share image are copied
+<!-- brand-version: 1.1.0 — logo, favicons and share image are copied
      verbatim from mumu-solutions/mumu-branding dist/assets and dist/brand-kit at that tag. See
      images/brand/MANIFEST.json for what generated each file. -->
 <html lang="pt-BR" data-theme="dark">
@@ -390,13 +390,19 @@ html[data-theme="light"] .hero-grid{opacity:.22}
 }
 
 /* products */
-.products{margin-top:3.5rem;display:grid;gap:1rem;grid-template-columns:1fr}
-@media (min-width:900px){ .products{grid-template-columns:repeat(3,1fr)} }
+.products{
+  margin-top:3.5rem;display:grid;gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
+}
 .product{
   display:flex;flex-direction:column;min-height:17rem;padding:1.75rem;
   background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
 }
-.product .cell-top{margin-bottom:auto}
+/* Fixed gap, not `auto`: bottom-anchoring the text made each card's title sit
+   wherever its own description ended, so a row of four had titles on two
+   different baselines. Top-anchored, they line up and the slack falls below. */
+.product .cell-top{margin-bottom:2.25rem}
+.product p:last-child{margin-bottom:auto}
 .chip{padding:.25rem .75rem;border:1px solid var(--border-strong);border-radius:999px;color:var(--fg-muted);font-size:.75rem}
 .product .kicker{color:var(--primary);font-family:var(--font-mono);font-size:.75rem}
 .product h3{margin-top:.6rem;font-size:1.5rem}
@@ -717,10 +723,21 @@ dialog .btn{margin-top:1.5rem}
       <div class="products reveal">
         <article class="product">
           <div class="cell-top">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M9 13.5h1.8l1.1-2.2 1.6 4 1.2-2.3h1.8"/></svg>
+            <span class="chip" data-lang="pt">Em operação</span><span class="chip" data-lang="en">In operation</span>
+          </div>
+          <span class="kicker">01 / Assessment</span>
+          <h3>MUMU Cloud Agent</h3>
+          <p data-lang="pt">Assessment de contas AWS, Azure, GCP e OCI pelos seis pilares do Well-Architected: inventário, custos, rede e 155 checks. Determinístico, sem IA.</p>
+          <p data-lang="en">Assessment of AWS, Azure, GCP, and OCI accounts against the six Well-Architected pillars: inventory, costs, network, and 155 checks. Deterministic, no AI.</p>
+        </article>
+
+        <article class="product">
+          <div class="cell-top">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2"/><rect x="14" y="2" width="8" height="8" rx="1"/></svg>
             <span class="chip" data-lang="pt">Em breve</span><span class="chip" data-lang="en">Coming soon</span>
           </div>
-          <span class="kicker">01 / SaaS</span>
+          <span class="kicker">02 / SaaS</span>
           <h3>MUMU Flow</h3>
           <p data-lang="pt">Plataforma para conectar sistemas internos, automatizar rotinas operacionais e acompanhar cada execução com rastreabilidade completa.</p>
           <p data-lang="en">A platform to connect internal systems, automate operational routines, and follow every execution with full traceability.</p>
@@ -731,7 +748,7 @@ dialog .btn{margin-top:1.5rem}
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2"/><rect x="14" y="2" width="8" height="8" rx="1"/></svg>
             <span class="chip" data-lang="pt">Em breve</span><span class="chip" data-lang="en">Coming soon</span>
           </div>
-          <span class="kicker">02 / SaaS</span>
+          <span class="kicker">03 / SaaS</span>
           <h3>MUMU Guard</h3>
           <p data-lang="pt">Visibilidade contínua sobre acessos, políticas e riscos técnicos, com apoio às exigências de LGPD, GDPR e PCI.</p>
           <p data-lang="en">Continuous visibility over access, policies, and technical risk, supporting LGPD, GDPR, and PCI requirements.</p>
@@ -742,7 +759,7 @@ dialog .btn{margin-top:1.5rem}
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2"/><rect x="14" y="2" width="8" height="8" rx="1"/></svg>
             <span class="chip" data-lang="pt">Em estudo</span><span class="chip" data-lang="en">Exploring</span>
           </div>
-          <span class="kicker">03 / SaaS</span>
+          <span class="kicker">04 / SaaS</span>
           <h3>MUMU Lens</h3>
           <p data-lang="pt">Painel único de FinOps e observabilidade para entender consumo de cloud, gargalos de performance e oportunidades de economia.</p>
           <p data-lang="en">A single FinOps and observability dashboard to understand cloud spend, performance bottlenecks, and savings opportunities.</p>
