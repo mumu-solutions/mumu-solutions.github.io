@@ -3,5 +3,7 @@
 __pycache__/
 *.pyc
 
-# Local-only preview harness; not part of the site.
-REVIEW-PREVIEW.local.html
+# Local-only scratch pages — preview harnesses, reference docs, anything built to
+# look at rather than to publish. The .local.html suffix is the marker; name a file
+# that way and it stays out of the repo, and therefore out of what Pages serves.
+*.local.html
