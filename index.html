@@ -28,34 +28,43 @@
 <!-- Content Security Policy. Must stay near the top of <head>: a meta CSP only
      governs what is fetched after it is parsed.
 
-     script-src carries a sha256 of each inline <script>. Editing any of those
-     three blocks changes its hash and the browser will refuse to run it, so
-     tools/check_csp_hashes.py recomputes them and the deploy workflow fails on a
-     mismatch. Do not hand-edit the hashes; run the script.
+     default-src is 'none', so anything not named below is denied rather than
+     inherited. Every type this page actually loads has its own directive; there
+     is no media, no iframe, no worker and no manifest to allow.
 
-     style-src is 'unsafe-inline' on purpose, not laziness. The stylesheet is
-     23 KB edited by hand months apart, and a stale style hash silently unstyles
-     the whole page — a far worse and far likelier failure than the style
-     injection it would prevent. Scripts get hashes because there the trade runs
-     the other way. Note a hash would also *disable* 'unsafe-inline' here (CSP
-     ignores 'unsafe-inline' whenever a hash or nonce is present) and break the
-     two style="margin-top:0" attributes, which hashes cannot cover at all.
+     script-src and style-src carry a sha256 of each inline block, and no
+     'unsafe-inline' anywhere. Edit any <script> or the <style> and its hash
+     changes — the browser then refuses that block, which for style-src means the
+     page renders completely unstyled. tools/check_csp_hashes.py recomputes both
+     and the deploy workflow fails on a mismatch. Do not hand-edit the hashes:
+
+         python3 tools/check_csp_hashes.py --fix
+
+     That guard is what makes hashing the stylesheet safe. Without it, hashing
+     23 KB of hand-edited CSS would be reckless — the failure is silent, total,
+     and months could pass before anyone noticed.
+
+     Hashes cannot cover style="..." attributes, only 'unsafe-inline' can, which
+     would in turn be ignored the moment a hash is present. So the two former
+     style="margin-top:0" attributes became the .lead-flush class. Keep it that
+     way: a new style attribute anywhere on this page will silently not apply.
 
      cloudflareinsights.com is allowed because the privacy section says Web
      Analytics runs. It is not currently injected, but a CSP that blocks it the
      day it is switched back on is a trap.
 
-     frame-ancestors is listed but browsers IGNORE it in a meta CSP — expect a
-     console notice saying exactly that. It earns nothing in a real browser. It
-     is here because MDN Observatory's x-frame-options test passes when the CSP
-     declares frame-ancestors, and Observatory does read meta CSP, so it is worth
-     20 points and it records the intent. Actual clickjacking protection needs
-     the header. Until Cloudflare sends one, this page is framable.
+     frame-ancestors is listed and browsers IGNORE it in a meta CSP. This is not
+     a guess: framing https://www.mumu.solutions/ from another origin was tested
+     and the document loaded, so the site is framable today despite this line. It
+     stays because MDN Observatory's x-frame-options test reads meta CSP and
+     passes on it, and because it records the intent — but it is the one
+     directive here that protects nobody. Real clickjacking protection needs the
+     response header, from Cloudflare. See SECURITY-HEADERS.md.
 
      The rest cannot be expressed here at all — HSTS, X-Content-Type-Options,
      COOP, COEP, CORP and the HTTP->HTTPS redirect are response headers or infra.
      See SECURITY-HEADERS.md for the Cloudflare side. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self' 'sha256-xZDVowr6Cb4wM7ewpKk8dXQqP7k1Vl9U8WJw2OFStxI='; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; upgrade-insecure-requests">
 
 <!-- Referrer-Policy. The meta form is honoured by browsers; the header form is
      set in Cloudflare too, so a scanner sees it. -->
@@ -258,6 +267,10 @@ section{scroll-margin-top:var(--nav-h)}
   text-transform:uppercase;letter-spacing:.06em;margin:0 0 1.25rem;
 }
 .lead{color:var(--fg-muted);font-size:1.125rem;max-width:44rem;margin-top:1.25rem}
+/* Was style="margin-top:0" on two paragraphs. A style attribute cannot be
+   covered by a CSP hash — only 'unsafe-inline' allows it — so the two of them
+   were the sole reason style-src had to stay open. Cheaper as a class. */
+.lead.lead-flush{margin-top:0}
 .section-head h2{font-size:clamp(2rem,4.5vw,3rem);max-width:52rem}
 .btn{
   /* nowrap + no shrink: as a flex item the label was collapsing to two or
@@ -584,8 +597,8 @@ dialog .btn{margin-top:1.5rem}
         <h2 data-lang="en">Technology should move business forward — not slow it down.</h2>
       </div>
       <div>
-        <p class="lead" style="margin-top:0" data-lang="pt">A MUMU aproxima visão de negócio e execução técnica. Entramos no contexto, entendemos o que realmente importa e construímos uma base sustentável para cada etapa do crescimento.</p>
-        <p class="lead" style="margin-top:0" data-lang="en">MUMU brings business vision and technical execution together. We understand the context, focus on what matters, and build a sustainable foundation for every stage of growth.</p>
+        <p class="lead lead-flush" data-lang="pt">A MUMU aproxima visão de negócio e execução técnica. Entramos no contexto, entendemos o que realmente importa e construímos uma base sustentável para cada etapa do crescimento.</p>
+        <p class="lead lead-flush" data-lang="en">MUMU brings business vision and technical execution together. We understand the context, focus on what matters, and build a sustainable foundation for every stage of growth.</p>
 
         <ul class="points">
           <li>
