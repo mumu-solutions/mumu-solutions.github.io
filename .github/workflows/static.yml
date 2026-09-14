@@ -40,11 +40,12 @@ jobs:
         with:
           node-version-file: .nvmrc
 
-      # A stale CSP hash fails silently in the browser: the script is refused and
-      # the page loses its theme toggle and language switcher with nothing in the
-      # HTML to show for it. Cheaper to stop the deploy than to notice in a week.
-      - name: Verify CSP script hashes
-        run: python3 tools/check_csp_hashes.py
+      # The site scores A+ on Observatory and most of that is easy to lose by
+      # accident and hard to notice — one style="..." attribute, one CDN script,
+      # one 'unsafe-inline' added to make something work. None of those break the
+      # page, so nothing else would catch them. Stop the deploy instead.
+      - name: Verify security requirements
+        run: python3 tools/check_security.py
 
       - name: Setup Pages
         uses: actions/configure-pages@v6

@@ -1,0 +1,142 @@
+name: Observatory grade
+
+# Watches the live security grade, which the deploy gate cannot see.
+#
+# tools/check_security.py enforces everything that lives in index.html, and it
+# runs before every deploy. The other half of the grade is response headers —
+# HSTS, nosniff, the HTTP->HTTPS redirect, COOP/COEP/CORP — and those are set in
+# Cloudflare, outside this repository. Nothing in a pull request would notice
+# someone toggling them off.
+#
+# So this re-scans the real site on a schedule and complains if the grade slips.
+# The rolling issue is the state, exactly as in brand-drift.yml: if the grade is
+# below the floor the issue is open and current; if it recovers, the issue closes.
+# Re-running never double-reports.
+
+on:
+  schedule:
+    # Weekly. Headers change when someone changes them, not on their own — daily
+    # would be noise. GitHub disables cron on repos idle for 60 days; if this
+    # stops firing, that is why.
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      host:
+        description: 'Host to scan (blank = the CNAME)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: observatory
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Resolve the host
+        id: host
+        env:
+          # Never interpolate an input into a run: script — it is shell source.
+          INPUT_HOST: ${{ inputs.host }}
+        run: |
+          set -euo pipefail
+          HOST="${INPUT_HOST:-}"
+          [ -n "$HOST" ] || HOST="$(tr -d '[:space:]' < CNAME)"
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+          echo "Scanning $HOST"
+
+      - name: Scan and grade
+        id: scan
+        env:
+          HOST: ${{ steps.host.outputs.host }}
+        run: |
+          set -euo pipefail
+          API=https://observatory-api.mdn.mozilla.net/api/v2
+          # POST triggers a fresh scan; the cached GET would happily return a
+          # result from before whatever we are trying to catch.
+          curl -sS --max-time 180 -X POST "$API/scan?host=$HOST" -o scan.json
+          curl -sS --max-time 120 "$API/analyze?host=$HOST" -o analyze.json
+          python3 tools/observatory_report.py scan.json analyze.json > report.md
+          {
+            echo "grade=$(python3 -c "import json;print(json.load(open('scan.json')).get('grade',''))")"
+            echo "score=$(python3 -c "import json;print(json.load(open('scan.json')).get('score',0))")"
+          } >> "$GITHUB_OUTPUT"
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Compare against the floor
+        id: verdict
+        env:
+          SCORE: ${{ steps.scan.outputs.score }}
+        run: |
+          set -euo pipefail
+          FLOOR=$(tr -d '[:space:]' < .github/observatory-floor)
+          if [ "${SCORE:-0}" -lt "$FLOOR" ]; then
+            echo "regressed=yes" >> "$GITHUB_OUTPUT"
+            echo "::warning::Observatory score $SCORE is below the floor of $FLOOR"
+          else
+            echo "regressed=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          REGRESSED: ${{ steps.verdict.outputs.regressed }}
+          GRADE: ${{ steps.scan.outputs.grade }}
+          HOST: ${{ steps.host.outputs.host }}
+        run: |
+          set -euo pipefail
+
+          # gh issue * fails outright on a repo with Issues turned off, so ask
+          # first and degrade to the summary rather than dying on it.
+          if [ "$(gh repo view "$REPO" --json hasIssuesEnabled --jq .hasIssuesEnabled)" != "true" ]; then
+            echo "::notice::Issues are disabled on $REPO — the report is in the run summary."
+            [ "$REGRESSED" = "yes" ] && exit 1
+            exit 0
+          fi
+
+          gh label create security-grade --color B60205 \
+            --description 'Live security headers have regressed' 2>/dev/null || true
+
+          # `|| true`: under `set -e`, filtering on a label the API does not know
+          # yet would kill the step before it can create the first issue.
+          NUM=$(gh issue list --repo "$REPO" --label security-grade --state open \
+                  --json number --jq '.[0].number // ""' 2>/dev/null || true)
+
+          if [ "$REGRESSED" = "no" ]; then
+            if [ -n "$NUM" ]; then
+              gh issue comment "$NUM" --repo "$REPO" \
+                --body "Recovered: $HOST is back to grade $GRADE. Closing."
+              gh issue close "$NUM" --repo "$REPO"
+              echo "Closed #$NUM — grade recovered."
+            else
+              echo "Grade $GRADE is at or above the floor. Nothing to do."
+            fi
+            exit 0
+          fi
+
+          BODY=$(cat report.md)
+          TITLE="Security grade dropped to $GRADE on $HOST"
+          if [ -n "$NUM" ]; then
+            gh issue edit "$NUM" --repo "$REPO" --title "$TITLE" --body "$BODY"
+            echo "Updated #$NUM"
+          else
+            gh issue create --repo "$REPO" --title "$TITLE" \
+              --label security-grade --body "$BODY"
+          fi
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: observatory-report
+          path: |
+            scan.json
+            analyze.json
+            report.md
