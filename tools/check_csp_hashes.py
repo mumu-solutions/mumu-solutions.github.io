@@ -31,17 +31,28 @@ import sys
 from pathlib import Path
 
 PAGE = Path(__file__).resolve().parent.parent / "index.html"
-CSP_RE = re.compile(r'(<meta http-equiv="Content-Security-Policy" content=")([^"]*)(">)')
+
+# Every pattern here is case-insensitive, because HTML tag and attribute names
+# are. <SCRIPT> and <Script> are the same element to a browser, so a
+# case-sensitive scan would skip one, leave it unhashed, and the CSP would then
+# block a script this tool just told you was fine. CodeQL flags exactly this as
+# "bad HTML filtering regexp" and it is right to.
+CSP_RE = re.compile(
+    r'(<meta\s+http-equiv="Content-Security-Policy"\s+content=")([^"]*)(">)', re.I
+)
+SCRIPT_RE = re.compile(r"<script([^>]*)>(.*?)</script>", re.S | re.I)
+COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 
 
 def inline_script_hashes(html: str) -> list[str]:
     """sha256 of every inline <script> the browser will execute, in document order."""
-    without_comments = re.sub(r"<!--.*?-->", "", html, flags=re.S)
+    without_comments = COMMENT_RE.sub("", html)
     out = []
-    for m in re.finditer(r"<script([^>]*)>(.*?)</script>", without_comments, re.S):
-        attrs, body = m.group(1), m.group(2)
+    for m in SCRIPT_RE.finditer(without_comments):
+        attrs, body = m.group(1).lower(), m.group(2)
         if "src=" in attrs or "ld+json" in attrs:
             continue
+        # body is hashed as written — only the attributes are case-folded
         out.append(base64.b64encode(hashlib.sha256(body.encode()).digest()).decode())
     return out
 
