@@ -85,7 +85,13 @@ CNAME               custom domain, one line
 SECURITY-HEADERS.md the Cloudflare side and why each header is there
 tools/              check_security.py, check_csp_hashes.py, observatory_report.py,
                     brand_drift.py, brand_watch.sh
+*.local.html        scratch pages — gitignored, never published
 ```
+
+Everything committed here is served: `upload-pages-artifact` uploads the whole
+repository. So a scratch page built to look at rather than to publish gets the
+`.local.html` suffix and stays untracked. Name it that way and it cannot reach
+the site by accident.
 
 ## Products
 
