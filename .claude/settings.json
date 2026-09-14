@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(python3 tools/brand_drift.py *)",
+      "Bash(tools/brand_watch.sh *)",
+      "Bash(./tools/brand_watch.sh *)",
+      "Bash(python3 tools/check_security.py)",
+      "Bash(python3 tools/check_security.py *)",
+      "Bash(python3 tools/observatory_report.py *)",
+      "Bash(python3 tools/check_csp_hashes.py)"
+    ]
+  }
+}
