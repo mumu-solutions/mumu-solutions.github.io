@@ -1,0 +1,48 @@
+# MUMU Solutions
+
+> Consultoria e engenharia de tecnologia. Estratégia, cloud, segurança e produtos
+> digitais para empresas que precisam escalar.
+>
+> *(English: technology consultancy and software engineering — strategy, cloud,
+> security and digital products. The site carries full English content alongside
+> the Portuguese.)*
+
+Site institucional de página única, publicado em https://www.mumu.solutions/.
+Não existem outras URLs: os links abaixo são âncoras dentro dessa mesma página.
+O documento é bilíngue pt-BR / en-US — os dois idiomas estão no HTML e a troca
+acontece no navegador, sem mudar de endereço.
+
+## Seções
+
+- [Início](https://www.mumu.solutions/#home): posicionamento e proposta de valor.
+- [Sobre](https://www.mumu.solutions/#about): quem é a MUMU Solutions.
+- [Soluções](https://www.mumu.solutions/#solutions): serviços de consultoria e engenharia.
+- [Clientes](https://www.mumu.solutions/#industries): setores e portes atendidos.
+- [Produtos](https://www.mumu.solutions/#products): portfólio de produtos próprios.
+- [Programa](https://www.mumu.solutions/#program): programa de parcerias.
+- [Contato](https://www.mumu.solutions/#contact): como falar com a empresa.
+
+## Produtos
+
+O que cada produto faz. O estágio de cada um é mostrado na própria página e muda
+com o tempo — consulte https://www.mumu.solutions/#products para o estado atual.
+
+- **MUMU Cloud Agent**: painel de observação e controle multicloud, cobrindo contas
+  AWS, Azure, GCP e OCI.
+- **MUMU SA-N**: identidade centralizada como serviço — autenticação, single sign-on
+  e políticas de autorização emitidas e aplicadas em um único ponto.
+- **MUMU Studio**: publicação de trabalhos de fotografia para clientes específicos,
+  com galerias privadas, compartilhamento com marca d'água, edição por IA e álbuns.
+- **MUMU R2C**: CRM personalizável e portátil entre ambientes, que mantém o histórico
+  de cada cliente em um único lugar.
+- **MUMU Kite**: gestão de perfis digitais — criação e administração de conteúdo para
+  redes sociais, endomarketing com colaboradores e presença de marca junto aos clientes.
+
+## Notas para quem indexa
+
+- Uma única página; `sitemap.xml` lista âncoras como checklist de seções, não como
+  documentos separados.
+- O idioma declarado é pt-BR. O conteúdo em inglês está no mesmo HTML, em elementos
+  irmãos marcados com `data-lang`.
+- `robots.txt` libera apenas a home, `/images/`, `/fonts/`, `/sitemap.xml` e este
+  arquivo; o resto está bloqueado deliberadamente.

@@ -1,8 +1,9 @@
 # robots.txt — MUMU Solutions
-# Updated: 2026-09-10
+# Updated: 2026-09-14
 #
 # Policy: only the homepage is indexable. Everything else is denied by the
-# Disallow below and opened back up case by case.
+# Disallow below and opened back up case by case. /llms.txt is one of those
+# exceptions — a file written for crawlers is useless if robots.txt hides it.
 #
 # Two things must stay allowed for the site to work correctly in search and
 # in social previews:
@@ -18,6 +19,7 @@ Allow: /index.html
 Allow: /images/
 Allow: /fonts/
 Allow: /sitemap.xml
+Allow: /llms.txt
 Disallow: /
 
 # Social crawlers need the Open Graph image, not just the page.
