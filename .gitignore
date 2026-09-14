@@ -1,0 +1,7 @@
+# Python bytecode from tools/. This repo is published in its entirety by
+# actions/upload-pages-artifact, so anything committed here is served.
+__pycache__/
+*.pyc
+
+# Local-only preview harness; not part of the site.
+REVIEW-PREVIEW.local.html
