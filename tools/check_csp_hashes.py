@@ -17,47 +17,82 @@ both deliberate:
     so CSP has nothing to block, and hashing it would mean every edit to the
     structured data also needed a hash update for no security gain.
 
-HTML comments are stripped before scanning. This is not hypothetical tidiness:
-index.html documents its own structure with the literal text "<script>" inside a
-comment, and a regex that misses that will hash the comment plus everything up
-to the first real </script> — producing a hash that matches nothing and a CSP
-that blocks the real script.
+Scanning uses html.parser rather than a regular expression. That is not a style
+preference — see _ScriptCollector for the three separate ways the regex version
+was wrong, starting with index.html's own header comment, which contains the
+literal text "<script>" and was hashed as if it were code.
 """
 
 import base64
 import hashlib
 import re
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 PAGE = Path(__file__).resolve().parent.parent / "index.html"
 
-# Every pattern here is case-insensitive, because HTML tag and attribute names
-# are. <SCRIPT> and <Script> are the same element to a browser, so a
-# case-sensitive scan would skip one, leave it unhashed, and the CSP would then
-# block a script this tool just told you was fine. CodeQL flags exactly this as
-# "bad HTML filtering regexp" and it is right to.
+# Locating the CSP meta tag so it can be rewritten in place. This one stays a
+# regex because it needs the exact character span to splice, and it is matched
+# against a tag this repository writes and owns — it is not filtering untrusted
+# markup.
 CSP_RE = re.compile(
     r'(<meta\s+http-equiv="Content-Security-Policy"\s+content=")([^"]*)(">)', re.I
 )
-# The closing tag allows whitespace before the ">" — "</script >" and "</script\n>"
-# are both valid and both end the element. Requiring a bare "</script>" would run
-# the match past the real end and on to the next one, hashing two scripts and the
-# markup between them as a single block: a hash matching nothing, and a page whose
-# scripts the CSP then refuses.
-SCRIPT_RE = re.compile(r"<script([^>]*)>(.*?)</script\s*>", re.S | re.I)
-COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
+
+
+class _ScriptCollector(HTMLParser):
+    """Collect (attributes, body) for every <script> element, in document order.
+
+    This used to be a regex, and it was wrong three times in a row — each caught
+    by CodeQL's py/bad-tag-filter, each a different edge of the same mistake:
+
+      1. "<script>" appearing inside an HTML comment was matched as an element,
+         swallowing everything up to the first real "</script>".
+      2. "<SCRIPT>" was skipped, because HTML tag names are case-insensitive and
+         the pattern was not.
+      3. "</script >" did not terminate the element, so the match ran on into the
+         next script.
+
+    A fourth was waiting — "</script foo>" also closes the element, since end
+    tags may carry (ignored) attributes. The lesson is not that the regex needed
+    a fourth patch; it is that matching HTML with regular expressions cannot be
+    made correct. The standard library already has a parser that handles every
+    one of these cases, including treating script content as raw CDATA.
+    """
+
+    def __init__(self) -> None:
+        # convert_charrefs must stay False: the hash has to cover the bytes the
+        # browser hashes, and entity conversion would silently rewrite them.
+        super().__init__(convert_charrefs=False)
+        self.blocks: list[tuple[dict[str, str], str]] = []
+        self._attrs: dict[str, str] | None = None
+        self._buf: list[str] = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "script":
+            self._attrs = {k.lower(): (v or "") for k, v in attrs}
+            self._buf = []
+
+    def handle_data(self, data):
+        if self._attrs is not None:
+            self._buf.append(data)
+
+    def handle_endtag(self, tag):
+        if tag == "script" and self._attrs is not None:
+            self.blocks.append((self._attrs, "".join(self._buf)))
+            self._attrs = None
 
 
 def inline_script_hashes(html: str) -> list[str]:
     """sha256 of every inline <script> the browser will execute, in document order."""
-    without_comments = COMMENT_RE.sub("", html)
+    p = _ScriptCollector()
+    p.feed(html)
+    p.close()
     out = []
-    for m in SCRIPT_RE.finditer(without_comments):
-        attrs, body = m.group(1).lower(), m.group(2)
-        if "src=" in attrs or "ld+json" in attrs:
+    for attrs, body in p.blocks:
+        if "src" in attrs or "ld+json" in attrs.get("type", "").lower():
             continue
-        # body is hashed as written — only the attributes are case-folded
         out.append(base64.b64encode(hashlib.sha256(body.encode()).digest()).decode())
     return out
 
