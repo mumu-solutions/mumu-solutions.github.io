@@ -40,7 +40,12 @@ PAGE = Path(__file__).resolve().parent.parent / "index.html"
 CSP_RE = re.compile(
     r'(<meta\s+http-equiv="Content-Security-Policy"\s+content=")([^"]*)(">)', re.I
 )
-SCRIPT_RE = re.compile(r"<script([^>]*)>(.*?)</script>", re.S | re.I)
+# The closing tag allows whitespace before the ">" — "</script >" and "</script\n>"
+# are both valid and both end the element. Requiring a bare "</script>" would run
+# the match past the real end and on to the next one, hashing two scripts and the
+# markup between them as a single block: a hash matching nothing, and a page whose
+# scripts the CSP then refuses.
+SCRIPT_RE = re.compile(r"<script([^>]*)>(.*?)</script\s*>", re.S | re.I)
 COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 
 
