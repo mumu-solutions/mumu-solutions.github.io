@@ -47,6 +47,12 @@ jobs:
       - name: Verify security requirements
         run: python3 tools/check_security.py
 
+      # VERSION and the meta tag in index.html are two copies of one fact, and
+      # two copies drift. A deploy whose page reports a version it was not built
+      # from makes every later "which build is live?" answer a guess.
+      - name: Verify version
+        run: python3 tools/check_version.py
+
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Upload artifact

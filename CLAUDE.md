@@ -48,6 +48,43 @@ tag** — this was tested, and the live site is currently framable. It is kept
 because Observatory reads it. Real clickjacking protection needs a response
 header; see `SECURITY-HEADERS.md`.
 
+## Versioning
+
+`VERSION` is the source of truth; the `<meta name="version">` in `index.html`
+mirrors it so you can read the deployed build off the live site:
+
+```bash
+curl -s https://www.mumu.solutions/ | grep 'name="version"'
+```
+
+The two must agree — `tools/check_version.py` fails the deploy otherwise. Never
+edit the meta tag by hand.
+
+```bash
+python3 tools/check_version.py               # verify
+python3 tools/check_version.py --bump minor  # raise VERSION and sync the page
+```
+
+**The rule is the public contract, not the size of the diff.**
+
+| part | when |
+|---|---|
+| MAJOR | a `<section id>` is renamed or removed |
+| MINOR | a new section, product card, or capability — additive |
+| PATCH | copy, styling, metadata, tooling |
+
+Those seven anchors are referenced by `sitemap.xml`, `llms.txt`, the nav, and by
+inbound links nobody controls. Breaking one breaks somebody else's bookmark, so a
+redesign that touches every CSS rule but keeps all seven anchors is a MINOR, while
+a one-line edit renaming `#about` to `#sobre` is a MAJOR.
+
+Tag a release from `main` after merging, matching the org convention
+(`mumu-branding` uses `v1.1.0`):
+
+```bash
+git tag -a "v$(cat VERSION)" -m "Release v$(cat VERSION)" && git push origin "v$(cat VERSION)"
+```
+
 ## Site invariants
 
 Four pairs that can silently desync. The auditor checks all four.
@@ -77,14 +114,15 @@ dashboard settings, documented in `SECURITY-HEADERS.md`.
 ## Layout
 
 ```
+VERSION             semver source of truth; mirrored into index.html
 index.html          the site
 llms.txt            summary for AI crawlers; keep in step with #products
 sitemap.xml         canonical URL + section fragments; bump lastmod on change
 robots.txt          crawl rules (Cloudflare prepends its own block at the edge)
 CNAME               custom domain, one line
 SECURITY-HEADERS.md the Cloudflare side and why each header is there
-tools/              check_security.py, check_csp_hashes.py, observatory_report.py,
-                    brand_drift.py, brand_watch.sh
+tools/              check_security.py, check_csp_hashes.py, check_version.py,
+                    observatory_report.py, brand_drift.py, brand_watch.sh
 *.local.html        scratch pages — gitignored, never published
 ```
 
