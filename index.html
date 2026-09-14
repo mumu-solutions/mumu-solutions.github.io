@@ -25,6 +25,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Content Security Policy. Must stay near the top of <head>: a meta CSP only
+     governs what is fetched after it is parsed.
+
+     script-src carries a sha256 of each inline <script>. Editing any of those
+     three blocks changes its hash and the browser will refuse to run it, so
+     tools/check_csp_hashes.py recomputes them and the deploy workflow fails on a
+     mismatch. Do not hand-edit the hashes; run the script.
+
+     style-src is 'unsafe-inline' on purpose, not laziness. The stylesheet is
+     23 KB edited by hand months apart, and a stale style hash silently unstyles
+     the whole page — a far worse and far likelier failure than the style
+     injection it would prevent. Scripts get hashes because there the trade runs
+     the other way. Note a hash would also *disable* 'unsafe-inline' here (CSP
+     ignores 'unsafe-inline' whenever a hash or nonce is present) and break the
+     two style="margin-top:0" attributes, which hashes cannot cover at all.
+
+     cloudflareinsights.com is allowed because the privacy section says Web
+     Analytics runs. It is not currently injected, but a CSP that blocks it the
+     day it is switched back on is a trap.
+
+     frame-ancestors is listed but browsers IGNORE it in a meta CSP — expect a
+     console notice saying exactly that. It earns nothing in a real browser. It
+     is here because MDN Observatory's x-frame-options test passes when the CSP
+     declares frame-ancestors, and Observatory does read meta CSP, so it is worth
+     20 points and it records the intent. Actual clickjacking protection needs
+     the header. Until Cloudflare sends one, this page is framable.
+
+     The rest cannot be expressed here at all — HSTS, X-Content-Type-Options,
+     COOP, COEP, CORP and the HTTP->HTTPS redirect are response headers or infra.
+     See SECURITY-HEADERS.md for the Cloudflare side. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; upgrade-insecure-requests">
+
+<!-- Referrer-Policy. The meta form is honoured by browsers; the header form is
+     set in Cloudflare too, so a scanner sees it. -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
 <!-- The <title> is the search result, so it names the category someone would
      actually type. og:title below keeps the slogan, because a share in
      WhatsApp or LinkedIn is brand context, not a search query. -->
