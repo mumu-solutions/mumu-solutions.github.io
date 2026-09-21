@@ -53,8 +53,12 @@
      way: a new style attribute anywhere on this page will silently not apply.
 
      cloudflareinsights.com is allowed because the privacy section says Web
-     Analytics runs. It is not currently injected, but a CSP that blocks it the
-     day it is switched back on is a trap.
+     Analytics runs. It IS injected — a Lighthouse run shows Cloudflare adding
+     beacon.min.js (10.2 KB, ~289 ms) at the edge, even though it appears
+     nowhere in this file. An earlier version of this comment said it was not
+     injected; that was wrong and the CSP entry is load-bearing, not a
+     precaution. Note it now duplicates Google Analytics: both count page
+     views, and turning one off is a dashboard decision, not a code one.
 
      pagead2.googlesyndication.com is allowed on script-src for the same reason:
      the privacy section says AdSense is being enabled, so the loader may run.
@@ -113,7 +117,7 @@
      guessing from a commit: curl the page and read it. The two must agree —
      tools/check_version.py enforces that on every deploy. Do not edit this by
      hand; edit VERSION and run the script with --sync. -->
-<meta name="version" content="1.4.4">
+<meta name="version" content="1.4.5">
 <link rel="canonical" href="https://mumu.solutions/">
 <!-- No hreflang alternates on purpose. Both languages live in this one
      document, so ?lang=en is the same URL with the same canonical — an
@@ -155,11 +159,20 @@
 <link rel="sitemap" type="application/xml" href="sitemap.xml">
 
 <!-- Fonts are self-hosted: no third-party request, no DNS/TLS round trip.
-     The markup reaches exactly two other hosts — the Cloudflare Web Analytics
-     beacon, injected at the edge, and the AdSense loader below. The privacy
-     notice at the bottom of this file describes both. -->
+     The markup itself reaches two other hosts — the AdSense loader and the
+     Google Analytics tag below. Cloudflare injects a third at the edge, its
+     Web Analytics beacon, which is why cloudflareinsights.com is in the CSP
+     without appearing in this file. The privacy notice describes all three. -->
 <link rel="preload" href="fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/space-grotesk-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- All three faces are preloaded, and the mono one earns it: .eyebrow is the
+     first line of the hero, above the fold, and .switch button is the PT/EN
+     control in the header. Without this line the browser cannot know it needs
+     the file until it has parsed the stylesheet and matched those rules, which
+     put it at the end of a request chain — Lighthouse measured 622 ms of
+     critical-path latency with this file at the tail. A preload is only waste
+     when the font is not needed early; here it is. -->
+<link rel="preload" href="fonts/ibm-plex-mono-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- Google AdSense, publisher ca-pub-1351604242843112. Verbatim from the
      AdSense dashboard: async, so it never blocks first paint.
