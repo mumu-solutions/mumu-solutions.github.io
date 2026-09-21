@@ -77,6 +77,9 @@ Disallow: /
 User-agent: rogerbot
 Disallow: /
 
-# Canonical host is www — it must match CNAME, <link rel="canonical">,
+# Canonical host is the apex — it must match CNAME, <link rel="canonical">,
 # og:url and every <loc> in the sitemap, or ranking signal is split in two.
-Sitemap: https://www.mumu.solutions/sitemap.xml
+# www is not a second site: GitHub Pages 301s it here, because the apex is the
+# custom domain configured for the Pages deployment. That redirect is the
+# reason no www URL appears anywhere in this repository.
+Sitemap: https://mumu.solutions/sitemap.xml

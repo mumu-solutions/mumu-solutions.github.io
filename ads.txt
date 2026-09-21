@@ -4,7 +4,7 @@
 # IAB Tech Lab Authorized Digital Sellers. It names who is allowed to sell ad
 # inventory on this domain; a buyer that finds a seller here who is not listed
 # treats the impression as counterfeit. AdSense reports "Earnings at risk"
-# until this file is reachable at https://www.mumu.solutions/ads.txt, so
+# until this file is reachable at https://mumu.solutions/ads.txt, so
 # robots.txt carries an explicit Allow for it — the User-agent: * group ends
 # in Disallow: / and would otherwise hide it.
 #

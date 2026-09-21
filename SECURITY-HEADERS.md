@@ -19,7 +19,9 @@ which sits in front of Pages and is the only place that can add headers.
 
 ## Baseline, measured
 
-Scan of `www.mumu.solutions`, algorithm version 6, before any of this:
+Scan of `www.mumu.solutions`, algorithm version 6, before any of this. That was
+the canonical host at the time; it is the apex now, and the weekly Observatory
+run follows `CNAME`, so later scans are of `mumu.solutions`:
 
 | mod | test | result |
 |----:|------|--------|
@@ -33,24 +35,36 @@ Scan of `www.mumu.solutions`, algorithm version 6, before any of this:
 
 **Grade F, score 10.**
 
-## Fix this first: the site answers on plaintext HTTP
+## Resolved: plaintext HTTP and the redirect shape
+
+This section used to open "fix this first": the site answered 200 on plaintext
+HTTP, and the apex hopped to the other host while still unencrypted. Cloudflare's
+**SSL/TLS → Edge Certificates → Always Use HTTPS** has since been switched on and
+the shape is now the wanted one — same host to HTTPS first, then the final host:
 
 ```
-http://www.mumu.solutions/   -> 200 OK, serves the full page unencrypted
-http://mumu.solutions/       -> 301 -> http://www.mumu.solutions/   (still HTTP)
-https://mumu.solutions/      -> 301 -> https://www.mumu.solutions/  (correct)
+http://mumu.solutions/       -> 301 -> https://mumu.solutions/       (same host, to TLS)
+http://www.mumu.solutions/   -> 301 -> https://www.mumu.solutions/   (same host, to TLS)
+https://www.mumu.solutions/  -> 301 -> https://mumu.solutions/       (to the canonical host)
 ```
 
-The apex redirect crosses hosts while still on HTTP. The wanted shape is
-**same host to HTTPS first, then the final host**:
+That last hop is GitHub Pages, not Cloudflare: the apex is the custom domain
+configured for the Pages deployment, so Pages redirects www to it. Nothing in
+Cloudflare needs to know about the canonical host.
 
-```
-http://mumu.solutions  ->  https://mumu.solutions  ->  https://www.mumu.solutions
+Re-verify after any DNS or Cloudflare change:
+
+```bash
+for u in http://mumu.solutions/ http://www.mumu.solutions/ https://www.mumu.solutions/; do
+  echo -n "$u -> "; curl -sI "$u" | grep -iE '^HTTP|^location' | tr '\n' ' '; echo
+done
 ```
 
-This outranks every header below. HSTS cannot be preloaded while HTTP answers
-200, and a CSP delivered over HTTP can be stripped in transit by anyone on the
-path. In Cloudflare: **SSL/TLS → Edge Certificates → Always Use HTTPS**.
+One thing is still short of the claim it makes: the HSTS header carries
+`preload` but `max-age=15552000` (180 days), and the preload list requires at
+least a year. Either raise the max-age to `31536000` and submit the domain, or
+drop the `preload` token so the header stops advertising something that has not
+been done.
 
 ## Cloudflare: the header set
 
@@ -133,7 +147,7 @@ break the two `style="margin-top:0"` attributes, which hashes cannot cover.
 ## Re-check
 
 ```bash
-curl -sI https://www.mumu.solutions/ | grep -iE 'strict-transport|content-security|referrer|x-content-type|cross-origin'
+curl -sI https://mumu.solutions/ | grep -iE 'strict-transport|content-security|referrer|x-content-type|cross-origin'
 curl -sS -X POST "https://observatory-api.mdn.mozilla.net/api/v2/scan?host=mumu.solutions"
 curl -sS "https://observatory-api.mdn.mozilla.net/api/v2/analyze?host=mumu.solutions"
 ```

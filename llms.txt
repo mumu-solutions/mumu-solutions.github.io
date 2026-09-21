@@ -7,25 +7,25 @@
 > security and digital products. The site carries full English content alongside
 > the Portuguese.)*
 
-Site institucional de página única, publicado em https://www.mumu.solutions/.
+Site institucional de página única, publicado em https://mumu.solutions/.
 Não existem outras URLs: os links abaixo são âncoras dentro dessa mesma página.
 O documento é bilíngue pt-BR / en-US — os dois idiomas estão no HTML e a troca
 acontece no navegador, sem mudar de endereço.
 
 ## Seções
 
-- [Início](https://www.mumu.solutions/#home): posicionamento e proposta de valor.
-- [Sobre](https://www.mumu.solutions/#about): quem é a MUMU Solutions.
-- [Soluções](https://www.mumu.solutions/#solutions): serviços de consultoria e engenharia.
-- [Clientes](https://www.mumu.solutions/#industries): setores e portes atendidos.
-- [Produtos](https://www.mumu.solutions/#products): portfólio de produtos próprios.
-- [Programa](https://www.mumu.solutions/#program): programa de parcerias.
-- [Contato](https://www.mumu.solutions/#contact): como falar com a empresa.
+- [Início](https://mumu.solutions/#home): posicionamento e proposta de valor.
+- [Sobre](https://mumu.solutions/#about): quem é a MUMU Solutions.
+- [Soluções](https://mumu.solutions/#solutions): serviços de consultoria e engenharia.
+- [Clientes](https://mumu.solutions/#industries): setores e portes atendidos.
+- [Produtos](https://mumu.solutions/#products): portfólio de produtos próprios.
+- [Programa](https://mumu.solutions/#program): programa de parcerias.
+- [Contato](https://mumu.solutions/#contact): como falar com a empresa.
 
 ## Produtos
 
 O que cada produto faz. O estágio de cada um é mostrado na própria página e muda
-com o tempo — consulte https://www.mumu.solutions/#products para o estado atual.
+com o tempo — consulte https://mumu.solutions/#products para o estado atual.
 
 - **MUMU Cloud Agent**: painel de observação e controle multicloud, cobrindo contas
   AWS, Azure, GCP e OCI.

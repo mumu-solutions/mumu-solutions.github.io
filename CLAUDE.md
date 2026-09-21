@@ -54,7 +54,7 @@ header; see `SECURITY-HEADERS.md`.
 mirrors it so you can read the deployed build off the live site:
 
 ```bash
-curl -s https://www.mumu.solutions/ | grep 'name="version"'
+curl -s https://mumu.solutions/ | grep 'name="version"'
 ```
 
 The two must agree — `tools/check_version.py` fails the deploy otherwise. Never
