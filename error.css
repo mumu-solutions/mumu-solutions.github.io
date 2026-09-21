@@ -1,0 +1,163 @@
+/* error.css — the shared stylesheet for 404/401/403/500.
+ *
+ * Why a file and not an inline <style> like index.html:
+ * index.html hashes its inline blocks into the CSP, and tools/check_csp_hashes.py
+ * regenerates those hashes on every edit. That tooling only ever looks at
+ * index.html (PAGE = .../index.html). An inline block here would carry a
+ * hand-written sha256 that nothing regenerates and no gate verifies — exactly
+ * what CLAUDE.md forbids. Served from 'self', this needs no hash at all.
+ *
+ * These pages run NO JavaScript. That is why the theme follows
+ * prefers-color-scheme rather than the site's toggle, and why both languages
+ * are shown at once instead of the data-lang pairs index.html switches between.
+ * An error page that depended on script would be broken in exactly the
+ * circumstances it exists for.
+ *
+ * Tokens are copied from index.html so the two cannot drift apart silently —
+ * they are the same brand values, declared here for a document that does not
+ * load the site's stylesheet. Hex is canonical (brand decision D2).
+ */
+
+@font-face{font-family:Manrope;src:url(fonts/manrope-latin.woff2) format('woff2');font-weight:200 800;font-style:normal;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url(fonts/space-grotesk-600-latin.woff2) format('woff2');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url(fonts/ibm-plex-mono-500-latin.woff2) format('woff2');font-weight:500;font-style:normal;font-display:swap}
+
+/* Dark is the default, matching index.html's data-theme="dark". */
+:root{
+  --bg-body:#07090c;
+  --bg-card:#0d1117;
+  --bg-chip:#0f171f;
+  --fg:#f0f6fa;
+  --fg-muted:#8f9daa;
+  --primary:#3fa0ef;
+  --primary-fg:#04070b;
+  --border:#1c2530;
+  --border-strong:#2a3644;
+  --radius:.5rem;
+  --font-sans:Manrope,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-display:'Space Grotesk',Manrope,system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+
+@media (prefers-color-scheme: light){
+  :root{
+    --bg-body:#f7f9fb;
+    --bg-card:#ffffff;
+    --bg-chip:#eef2f7;
+    --fg:#0b1219;
+    --fg-muted:#566372;
+    --primary:#0d6ec2;
+    --primary-fg:#ffffff;
+    --border:#dde3ea;
+    --border-strong:#c6d0da;
+  }
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1.5rem;
+  background:var(--bg-body);
+  color:var(--fg);
+  font-family:var(--font-sans);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+.card{
+  width:100%;
+  max-width:34rem;
+  text-align:center;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:3rem 2rem;
+}
+
+/* The mascot. <picture> picks the colorway by media query so only one file is
+   downloaded — dist/ assets are baked to a single colorway (mumu-mumia
+   COMPLIANCE 3.3), so there is no theme-aware single image to use here. */
+.mascot{
+  width:9rem;
+  height:9rem;
+  display:block;
+  margin:0 auto 1.5rem;
+}
+
+.code{
+  font-family:var(--font-mono);
+  font-size:.8125rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--primary);
+  background:var(--bg-chip);
+  border:1px solid var(--border-strong);
+  border-radius:99rem;
+  padding:.3rem .85rem;
+  display:inline-block;
+  margin-bottom:1.25rem;
+}
+
+h1{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.75rem;
+  line-height:1.25;
+  margin:0 0 .35rem;
+}
+
+/* English sits under the Portuguese rather than replacing it. index.html hides
+   one of a data-lang pair with CSS its script drives; with no script here, a
+   hidden sibling would stay hidden forever. */
+.en{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.125rem;
+  color:var(--fg-muted);
+  margin:0 0 1.5rem;
+}
+
+p.say{margin:0 0 .35rem;font-size:1rem}
+p.say-en{margin:0 0 2rem;font-size:.9375rem;color:var(--fg-muted)}
+
+/* 403 and 500 put a mailto in the body copy. Inherit the muted colour in the
+   English line so the link does not outshine the sentence it sits in. */
+.say a,.say-en a{color:var(--primary);text-decoration:underline;text-underline-offset:.15em}
+.say a:focus-visible,.say-en a:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+.btn{
+  display:inline-block;
+  font-weight:700;
+  font-size:.9375rem;
+  text-decoration:none;
+  padding:.7rem 1.4rem;
+  border-radius:var(--radius);
+  background:var(--primary);
+  color:var(--primary-fg);
+  border:1px solid var(--primary);
+}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+
+.wordmark{
+  display:block;
+  height:1.25rem;
+  width:auto;
+  margin:2.5rem auto 0;
+  opacity:.7;
+}
+
+@media (max-width:30rem){
+  .card{padding:2rem 1.25rem}
+  h1{font-size:1.5rem}
+  .mascot{width:7rem;height:7rem}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}

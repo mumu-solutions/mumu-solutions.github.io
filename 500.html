@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+  500 — server error. Sibling of 404.html; read the comment there for why these
+  pages carry no JavaScript and show both languages at once.
+
+  NOT served automatically. GitHub Pages answers 5xx from its own error path
+  and never reads this file, so it is reachable only by typing the URL or by
+  Cloudflare Custom Pages pointing at it. See ADSENSE.md and the commit that
+  added it.
+
+  Keep this page's dependencies to a minimum on purpose: it exists for the
+  moment something is already failing, so every extra request is another thing
+  that can fail with it. error.css, two self-hosted fonts, two local images.
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<title>500 — Erro no servidor · MUMU Solutions</title>
+<meta name="robots" content="noindex, follow">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#07090c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f9fb" media="(prefers-color-scheme: light)">
+
+<!-- Ownership check only. The ad loader is deliberately absent — see 404.html. -->
+<meta name="google-adsense-account" content="ca-pub-1351604242843112">
+
+<link rel="icon" href="images/brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/brand/apple-touch-icon-180.png">
+<link rel="stylesheet" href="error.css">
+</head>
+<body>
+
+<main class="card">
+  <!-- "focus" — the target mark. The message is "we are on it", not "panic";
+       alert is already carrying 403 and a 500 the visitor cannot act on should
+       not read as an accusation. -->
+  <picture>
+    <source srcset="images/mumia/mumia-face-focus-dark-256.png" media="(prefers-color-scheme: dark)">
+    <img class="mascot" src="images/mumia/mumia-face-focus-light-256.png" width="256" height="256"
+         alt="MUMia, o mascote da MUMU Solutions, com um alvo no display do chapéu.">
+  </picture>
+
+  <span class="code">Erro 500</span>
+
+  <h1>Alguma coisa quebrou do nosso lado.</h1>
+  <p class="en">Something broke on our side.</p>
+
+  <p class="say">O erro é nosso, não seu — você não precisa mudar nada. Tente de novo em alguns instantes; se persistir, conte para <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+  <p class="say-en">The error is ours, not yours — there’s nothing for you to change. Try again shortly; if it persists, tell <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+
+  <a class="btn" href="/">Voltar ao início · Back home</a>
+
+  <picture>
+    <source srcset="images/brand/logo-wordmark-dark-480.png" media="(prefers-color-scheme: light)">
+    <img class="wordmark" src="images/brand/logo-wordmark-light-480.png" width="480" height="93"
+         alt="MUMU Solutions">
+  </picture>
+</main>
+
+</body>
+</html>

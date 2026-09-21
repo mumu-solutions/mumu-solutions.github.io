@@ -97,6 +97,34 @@ curl -sL https://realtimebidding.google.com/sellers.json \
 h=[x for x in s if x["seller_id"]=="pub-1351604242843112"]; print(h or "not listed yet")'
 ```
 
+## The error pages carry the meta, not the loader
+
+`404.html`, `401.html`, `403.html` and `500.html` each carry
+`<meta name="google-adsense-account">` — it proves the domain and serves no ad,
+so there is no reason for it to be absent. None of them carries the loader
+`<script>`, and that is deliberate. Google Publisher Policies, under Inventory
+Value:
+
+> We do not allow Google-served ads on screens: without publisher-content or
+> with low-value content, that are under construction, that are used for
+> alerts, navigation or other behavioral purposes
+
+An error page is a screen used for alerts and navigation, with no publisher
+content. There is a second, independent reason: the ad placement policies note
+that Google "may disable ad serving on content that cannot be evaluated",
+naming pages blocked by `robots.txt` — and every error page is blocked by this
+site's blanket `Disallow: /`.
+
+Today the CSP would block ad rendering on those pages anyway, so nothing is
+visibly wrong. The risk is later: whoever opens `frame-src` to make ads render
+on `index.html` would silently switch them on here too, if the loader were
+present. Keeping it off the error pages means that decision cannot leak into a
+policy breach by accident.
+
+The error pages also run **no JavaScript at all**, and their CSP sets
+`script-src 'none'`. Adding the loader means weakening that line first, which
+is the speed bump this note is meant to be.
+
 ## Still open
 
 1. **Site approval** in AdSense. Precedes everything; ad units serve blanks

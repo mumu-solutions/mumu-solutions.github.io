@@ -1,0 +1,81 @@
+{
+  "_comment": [
+    "MUMia expression marks, copied verbatim from mumu-solutions/mumu-mumia at",
+    "tag v1.0.0, path dist/png/expressions/. Same shape as images/brand/MANIFEST.json.",
+    "",
+    "dist/ in the mascot repo is generated and never hand-edited; these bytes are",
+    "a straight copy, so a drift check is a byte comparison against that tag.",
+    "",
+    "Two files per expression because dist/ assets are baked to a single colorway",
+    "(mumu-mumia COMPLIANCE 3.3: a theme-aware SVG rasterises to a silhouette, so",
+    "there is no one image that works on both grounds). The error pages pick one",
+    "with <picture media=\"(prefers-color-scheme: dark)\">, so only one downloads.",
+    "",
+    "Naming: '-dark-' is the DARK-THEME colorway, for a dark ground. Note this is",
+    "the opposite of images/brand/logo-wordmark-*, where '-light-' is the",
+    "light-COLOURED mark used on a dark ground.",
+    "",
+    "The site auditor lists these as orphans because it only resolves references",
+    "from index.html. They are used by the error pages, which it does not read."
+  ],
+  "source_repo": "mumu-solutions/mumu-mumia",
+  "source_ref": "v1.0.0",
+  "files": {
+    "mumia-face-lost-dark-256.png": {
+      "source": "dist/png/expressions/mumia-face-lost-dark-256.png",
+      "version": "1.0.0",
+      "expression": "lost",
+      "mark": "ellipsis",
+      "used_by": "404.html"
+    },
+    "mumia-face-lost-light-256.png": {
+      "source": "dist/png/expressions/mumia-face-lost-light-256.png",
+      "version": "1.0.0",
+      "expression": "lost",
+      "mark": "ellipsis",
+      "used_by": "404.html"
+    },
+    "mumia-face-doubt-dark-256.png": {
+      "source": "dist/png/expressions/mumia-face-doubt-dark-256.png",
+      "version": "1.0.0",
+      "expression": "doubt",
+      "mark": "wave",
+      "used_by": "401.html"
+    },
+    "mumia-face-doubt-light-256.png": {
+      "source": "dist/png/expressions/mumia-face-doubt-light-256.png",
+      "version": "1.0.0",
+      "expression": "doubt",
+      "mark": "wave",
+      "used_by": "401.html"
+    },
+    "mumia-face-alert-dark-256.png": {
+      "source": "dist/png/expressions/mumia-face-alert-dark-256.png",
+      "version": "1.0.0",
+      "expression": "alert",
+      "mark": "bang",
+      "used_by": "403.html"
+    },
+    "mumia-face-alert-light-256.png": {
+      "source": "dist/png/expressions/mumia-face-alert-light-256.png",
+      "version": "1.0.0",
+      "expression": "alert",
+      "mark": "bang",
+      "used_by": "403.html"
+    },
+    "mumia-face-focus-dark-256.png": {
+      "source": "dist/png/expressions/mumia-face-focus-dark-256.png",
+      "version": "1.0.0",
+      "expression": "focus",
+      "mark": "target",
+      "used_by": "500.html"
+    },
+    "mumia-face-focus-light-256.png": {
+      "source": "dist/png/expressions/mumia-face-focus-light-256.png",
+      "version": "1.0.0",
+      "expression": "focus",
+      "mark": "target",
+      "used_by": "500.html"
+    }
+  }
+}

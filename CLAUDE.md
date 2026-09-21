@@ -43,6 +43,13 @@ python3 tools/check_csp_hashes.py --fix
 
 Never hand-edit a `sha256-` value.
 
+**The error pages are outside all of this.** `check_security.py` and
+`check_csp_hashes.py` both read `index.html` only. `404.html` and its siblings
+carry their own, stricter CSP — `script-src 'none'`, `style-src 'self'` — which
+needs no hash precisely because they have no inline `<style>` or `<script>`.
+Keep it that way: the moment one of them gains an inline block, it acquires a
+hash that no tool regenerates and no gate checks. Put the rule in `error.css`.
+
 `frame-ancestors 'none'` is in the CSP but **browsers ignore it in a `<meta>`
 tag** — this was tested, and the live site is currently framable. It is kept
 because Observatory reads it. Real clickjacking protection needs a response
@@ -116,6 +123,9 @@ dashboard settings, documented in `SECURITY-HEADERS.md`.
 ```
 VERSION             semver source of truth; mirrored into index.html
 index.html          the site
+404.html            served by Pages for any unresolved path
+401/403/500.html    same design; NOT auto-served — see ADSENSE.md
+error.css           the error pages' stylesheet (they run no JS)
 llms.txt            summary for AI crawlers; keep in step with #products
 sitemap.xml         canonical URL + section fragments; bump lastmod on change
 robots.txt          crawl rules (Cloudflare prepends its own block at the edge)

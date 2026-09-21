@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--
+  404 — page not found.
+
+  This is the only error page GitHub Pages serves by itself: it looks for
+  /404.html and returns it for any path it cannot resolve. 401.html, 403.html
+  and 500.html are its siblings in markup but NOT in behaviour — a static
+  origin never emits 401 or 403, and Pages answers 5xx from its own error path
+  without reading this repository. Serving those three needs Cloudflare Custom
+  Pages; until that is wired, they are reachable only by typing the URL.
+  ADSENSE.md and the commit that added these files record the reasoning.
+
+  No JavaScript, on purpose. An error page is what a visitor gets when
+  something has already gone wrong; making it depend on script adds a way for
+  it to fail too. Consequences, both handled in error.css:
+    * the theme follows prefers-color-scheme, not the site's toggle
+    * both languages are shown, rather than data-lang pairs a script switches
+
+  The mascot is MUMia, from mumu-solutions/mumu-mumia at v1.0.0. Expression
+  per page is a deliberate mapping, not decoration — see images/mumia/MANIFEST.json.
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Stricter than index.html's, because this page needs less: no inline style
+     to hash, and script-src is 'none' rather than a hash list. Everything here
+     is served from this origin. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<title>404 — Página não encontrada · MUMU Solutions</title>
+<!-- noindex: an error page in the index is a bad search result. robots.txt
+     already blocks this path via the blanket Disallow, but a crawler that
+     reaches the URL another way reads the tag rather than the file. -->
+<meta name="robots" content="noindex, follow">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#07090c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f9fb" media="(prefers-color-scheme: light)">
+
+<!-- Ownership check for AdSense, the same tag index.html carries. It proves
+     the domain to Google and serves no ad. The ad LOADER is deliberately not
+     on this page: Google Publisher Policies (Inventory Value) do not allow
+     Google-served ads on screens "without publisher-content ... or that are
+     used for alerts, navigation or other behavioral purposes", which is what
+     an error page is. See ADSENSE.md. -->
+<meta name="google-adsense-account" content="ca-pub-1351604242843112">
+
+<link rel="icon" href="images/brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/brand/apple-touch-icon-180.png">
+<link rel="stylesheet" href="error.css">
+</head>
+<body>
+
+<main class="card">
+  <!-- "lost" — the hat display shows the ellipsis mark. The face never changes;
+       the expression lives on the hat (mumu-mumia COMPLIANCE 3.4). -->
+  <picture>
+    <source srcset="images/mumia/mumia-face-lost-dark-256.png" media="(prefers-color-scheme: dark)">
+    <img class="mascot" src="images/mumia/mumia-face-lost-light-256.png" width="256" height="256"
+         alt="MUMia, o mascote da MUMU Solutions, com reticências no display do chapéu.">
+  </picture>
+
+  <span class="code">Erro 404</span>
+
+  <h1>Esta página não existe.</h1>
+  <p class="en">This page doesn’t exist.</p>
+
+  <p class="say">O endereço pode ter mudado, ou o link que trouxe você até aqui está quebrado. O conteúdo do site continua todo na página inicial.</p>
+  <p class="say-en">The address may have changed, or the link that brought you here is broken. Everything on this site lives on the home page.</p>
+
+  <a class="btn" href="/">Voltar ao início · Back home</a>
+
+  <!-- Careful: the wordmark's light/dark naming is the opposite of the
+       mascot's. "light" is the light-COLOURED mark, for a dark ground — which
+       is how index.html uses it (.brand default = light-480, light theme =
+       dark-480). Swapping these makes the logo invisible, not wrong-coloured. -->
+  <picture>
+    <source srcset="images/brand/logo-wordmark-dark-480.png" media="(prefers-color-scheme: light)">
+    <img class="wordmark" src="images/brand/logo-wordmark-light-480.png" width="480" height="93"
+         alt="MUMU Solutions">
+  </picture>
+</main>
+
+</body>
+</html>
