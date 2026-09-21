@@ -91,7 +91,7 @@
      The rest cannot be expressed here at all — HSTS, X-Content-Type-Options,
      COOP, COEP, CORP and the HTTP->HTTPS redirect are response headers or infra.
      See SECURITY-HEADERS.md for the Cloudflare side. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' https://*.google-analytics.com; font-src 'self'; style-src 'self' 'sha256-xZDVowr6Cb4wM7ewpKk8dXQqP7k1Vl9U8WJw2OFStxI='; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com https://pagead2.googlesyndication.com https://www.googletagmanager.com; connect-src 'self' https://cloudflareinsights.com https://*.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' https://*.google-analytics.com; font-src 'self'; style-src 'self' 'sha256-xZDVowr6Cb4wM7ewpKk8dXQqP7k1Vl9U8WJw2OFStxI='; script-src 'self' 'sha256-MeVvEb23Jvh3rfV4bXiWuC4ymQ3k2QDIGp09r5rZuk8=' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com https://pagead2.googlesyndication.com https://www.googletagmanager.com; connect-src 'self' https://cloudflareinsights.com https://*.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'none'; upgrade-insecure-requests">
 
 <!-- Referrer-Policy. The meta form is honoured by browsers; the header form is
      set in Cloudflare too, so a scanner sees it. -->
@@ -113,7 +113,7 @@
      guessing from a commit: curl the page and read it. The two must agree —
      tools/check_version.py enforces that on every deploy. Do not edit this by
      hand; edit VERSION and run the script with --sync. -->
-<meta name="version" content="1.4.1">
+<meta name="version" content="1.4.2">
 <link rel="canonical" href="https://mumu.solutions/">
 <!-- No hreflang alternates on purpose. Both languages live in this one
      document, so ?lang=en is the same URL with the same canonical — an
@@ -179,15 +179,26 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1351604242843112"
      crossorigin="anonymous"></script>
 
-<!-- Google tag (gtag.js) — GA4 property G-QV4DCF3HTN.
-     Google's snippet ships the init inline; it is in analytics.js here because
-     this page's CSP has no 'unsafe-inline' and the four error pages cannot
-     carry a maintainable hash. See analytics.js for the full reasoning.
-     Order is load-bearing: analytics.js is render-blocking and defines
-     dataLayer and gtag(), the tag below is async, so Google's script always
-     finds them ready. Do not add defer to the second line. -->
+<!-- Google tag (gtag.js) — GA4 property G-QV4DCF3HTN. Google's snippet,
+     inline and unmodified, covered by a sha256 in script-src above that
+     tools/check_csp_hashes.py maintains. Edit it and run the script with
+     --fix, or the browser refuses the block and measurement stops.
+
+     It was briefly in an external analytics.js instead. That failed for a
+     reason worth keeping: Google verifies the tag by RENDERING the page, and
+     robots.txt — an allowlist ending in Disallow: / — did not permit
+     /analytics.js, so gtag('config') never ran for the crawler and Google
+     reported the tag as missing. robots.txt now allows the file, and the
+     error pages still use it because they have no hash tooling. Here the
+     inline form is simply what every detector expects to find. -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QV4DCF3HTN"></script>
-<script src="analytics.js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QV4DCF3HTN');
+</script>
 
 <script>
   /* Runs before first paint so the page never flashes the wrong theme or language. */

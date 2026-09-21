@@ -1,5 +1,5 @@
 # robots.txt — MUMU Solutions
-# Updated: 2026-09-21
+# Updated: 2026-09-21b
 #
 # Policy: only the homepage is indexable. Everything else is denied by the
 # Disallow below and opened back up case by case. /llms.txt and /ads.txt are
@@ -12,6 +12,12 @@
 #   * /images/ and /fonts/ — Google renders the page before indexing it. A
 #     crawler that cannot fetch the logo, the share image, or the webfonts
 #     sees a broken page and judges it accordingly.
+#   * every .css and .js the pages load, for the same reason and one more:
+#     Google verifies the analytics tag by RENDERING the page. While
+#     /analytics.js was behind the Disallow below, gtag('config') never ran
+#     for the crawler and Google reported the tag as not installed. This list
+#     was written when the site had no external script or stylesheet at all —
+#     add the next one here in the same commit that creates it.
 #   * the social crawlers below — they fetch og-image.png directly. Blocked,
 #     a link shared on WhatsApp or LinkedIn renders as a grey box.
 
@@ -23,6 +29,9 @@ Allow: /fonts/
 Allow: /sitemap.xml
 Allow: /llms.txt
 Allow: /ads.txt
+Allow: /analytics.js
+Allow: /error.css
+Allow: /error.js
 Disallow: /
 
 # Social crawlers need the Open Graph image, not just the page.
