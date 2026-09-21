@@ -91,7 +91,7 @@
      The rest cannot be expressed here at all — HSTS, X-Content-Type-Options,
      COOP, COEP, CORP and the HTTP->HTTPS redirect are response headers or infra.
      See SECURITY-HEADERS.md for the Cloudflare side. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' https://*.google-analytics.com; font-src 'self'; style-src 'self' 'sha256-xZDVowr6Cb4wM7ewpKk8dXQqP7k1Vl9U8WJw2OFStxI='; script-src 'self' 'sha256-MeVvEb23Jvh3rfV4bXiWuC4ymQ3k2QDIGp09r5rZuk8=' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com https://pagead2.googlesyndication.com https://www.googletagmanager.com; connect-src 'self' https://cloudflareinsights.com https://*.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' https://*.google-analytics.com; font-src 'self'; style-src 'self' 'sha256-u1rF+gBQKm/E9ydjFjyHyHUXrpiFMne2IlD18TnF8OQ='; script-src 'self' 'sha256-MeVvEb23Jvh3rfV4bXiWuC4ymQ3k2QDIGp09r5rZuk8=' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-zkNfEK02bw+wJAKp74YAAOsgs1CgkqopHDj97A+iVyA=' https://static.cloudflareinsights.com https://pagead2.googlesyndication.com https://www.googletagmanager.com; connect-src 'self' https://cloudflareinsights.com https://*.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'none'; upgrade-insecure-requests">
 
 <!-- Referrer-Policy. The meta form is honoured by browsers; the header form is
      set in Cloudflare too, so a scanner sees it. -->
@@ -113,7 +113,7 @@
      guessing from a commit: curl the page and read it. The two must agree —
      tools/check_version.py enforces that on every deploy. Do not edit this by
      hand; edit VERSION and run the script with --sync. -->
-<meta name="version" content="1.4.3">
+<meta name="version" content="1.4.4">
 <link rel="canonical" href="https://mumu.solutions/">
 <!-- No hreflang alternates on purpose. Both languages live in this one
      document, so ?lang=en is the same URL with the same canonical — an
@@ -331,12 +331,29 @@ section{scroll-margin-top:var(--nav-h)}
 .skip{position:absolute;left:-9999px;top:0;z-index:100;padding:.75rem 1rem;background:var(--primary);color:var(--primary-fg);border-radius:0 0 var(--radius) 0}
 .skip:focus{left:0}
 
-/* Language pairs: both languages ship in the HTML, JS reveals one.
-   Written as :not(.on) so it only ever HIDES — the visible element keeps
-   whatever display its own class gives it, and a later rule like
-   `.eyebrow{display:inline-flex}` can't accidentally un-hide the other
-   language the way a plain `[data-lang]{display:none}` would. */
-[data-lang]:not(.on){display:none}
+/* Language pairs: both languages ship in the HTML, CSS hides one.
+
+   This used to read `[data-lang]:not(.on){display:none}`, with the .on class
+   added by setLanguage() in the script before </body>. That meant all 154
+   language elements — the whole hero, every section, the footer — started
+   hidden and became visible only once that script ran, at the very end of the
+   document. Two measurable costs:
+
+     LCP  the <h1> could not paint until the JS had run, so the largest
+          element was gated behind parsing the entire page first.
+     CLS  154 elements went from display:none to visible in one frame,
+          reflowing everything below them.
+
+   The fix costs nothing, because the head script already sets
+   data-language on <html> BEFORE first paint. Keying off that attribute
+   means the correct language is painted immediately and never moves.
+
+   Still written to only ever HIDE the inactive side, which is what the old
+   :not(.on) form was protecting: the visible element keeps whatever display
+   its own class gives it, so `.eyebrow{display:inline-flex}` still works.
+   Two attribute selectors plus html outrank any single class. */
+html[data-language="pt"] [data-lang="en"],
+html[data-language="en"] [data-lang="pt"]{display:none}
 
 .eyebrow{
   display:inline-flex;align-items:center;gap:.5rem;color:var(--primary);
@@ -1207,9 +1224,9 @@ dialog .btn{margin-top:1.5rem}
     lang = lang === 'en' ? 'en' : 'pt';
     root.dataset.language = lang;
     root.lang = lang === 'en' ? 'en' : 'pt-BR';
-    document.querySelectorAll('[data-lang]').forEach(function (el) {
-      el.classList.toggle('on', el.dataset.lang === lang);
-    });
+    /* No per-element class toggling: setting data-language above is the whole
+       switch, because the stylesheet keys off it. Touching 154 elements here
+       was what forced every one of them to start hidden. */
     ptBtn.setAttribute('aria-pressed', String(lang === 'pt'));
     enBtn.setAttribute('aria-pressed', String(lang === 'en'));
 
