@@ -1,5 +1,5 @@
 # robots.txt — MUMU Solutions
-# Updated: 2026-09-14
+# Updated: 2026-09-21
 #
 # Policy: only the homepage is indexable. Everything else is denied by the
 # Disallow below and opened back up case by case. /llms.txt is one of those
@@ -45,6 +45,17 @@ User-agent: WhatsApp
 Allow: /$
 Allow: /index.html
 Allow: /images/
+Disallow: /
+
+# AdSense reads the page to decide which ads suit it. The blanket Disallow
+# above already leaves the homepage reachable, but Mediapartners-Google obeys
+# only its most specific matching group — so spell it out here rather than
+# letting the allowance depend on the User-agent: * block staying as it is.
+User-agent: Mediapartners-Google
+Allow: /$
+Allow: /index.html
+Allow: /images/
+Allow: /fonts/
 Disallow: /
 
 # SEO backlink crawlers — no value to this site, real bandwidth cost.

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <!--
   MUMU Solutions — institutional site
-  Static HTML/CSS/JS. No build step, no dependencies, no third-party requests.
+  Static HTML/CSS/JS. No build step, no dependencies. Two scripts come from
+  another host: the Cloudflare Web Analytics beacon (injected at the edge) and
+  the Google AdSense loader. Both are named in the CSP and in the privacy
+  dialog, and nothing else off-host is allowed to load.
 
   Structure
     <style>   design tokens -> base -> per-section blocks, in document order
@@ -53,6 +56,22 @@
      Analytics runs. It is not currently injected, but a CSP that blocks it the
      day it is switched back on is a trap.
 
+     pagead2.googlesyndication.com is allowed on script-src for the same reason:
+     the privacy section says AdSense is being enabled, so the loader may run.
+     That is the whole allowance, and it is deliberately not enough to display
+     an ad. Ads are drawn in iframes from googleads.g.doubleclick.net and
+     tpc.googlesyndication.com, with creatives fetched as images from Google
+     hosts — so serving them needs frame-src (absent here, therefore denied by
+     default-src 'none') and an img-src beyond 'self'. Google's ad code also
+     wants 'unsafe-inline' and 'unsafe-eval', which this policy refuses outright
+     and tools/check_security.py asserts against.
+
+     So: the loader is permitted, ad rendering is not. Opening frame-src and
+     img-src to Google is the change that makes ads appear, and it costs the
+     site its A+ — a deliberate decision to take in the open, not something to
+     discover by pasting hosts in until an ad shows up. Whoever takes it must
+     also relax tools/check_security.py, which is the point of that gate.
+
      frame-ancestors is listed and browsers IGNORE it in a meta CSP. This is not
      a guess: framing https://www.mumu.solutions/ from another origin was tested
      and the document loaded, so the site is framable today despite this line. It
@@ -64,7 +83,7 @@
      The rest cannot be expressed here at all — HSTS, X-Content-Type-Options,
      COOP, COEP, CORP and the HTTP->HTTPS redirect are response headers or infra.
      See SECURITY-HEADERS.md for the Cloudflare side. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self' 'sha256-xZDVowr6Cb4wM7ewpKk8dXQqP7k1Vl9U8WJw2OFStxI='; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self' 'sha256-xZDVowr6Cb4wM7ewpKk8dXQqP7k1Vl9U8WJw2OFStxI='; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com https://pagead2.googlesyndication.com; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; upgrade-insecure-requests">
 
 <!-- Referrer-Policy. The meta form is honoured by browsers; the header form is
      set in Cloudflare too, so a scanner sees it. -->
@@ -80,7 +99,7 @@
      guessing from a commit: curl the page and read it. The two must agree —
      tools/check_version.py enforces that on every deploy. Do not edit this by
      hand; edit VERSION and run the script with --sync. -->
-<meta name="version" content="1.0.0">
+<meta name="version" content="1.1.0">
 <link rel="canonical" href="https://www.mumu.solutions/">
 <!-- No hreflang alternates on purpose. Both languages live in this one
      document, so ?lang=en is the same URL with the same canonical — an
@@ -122,11 +141,29 @@
 <link rel="sitemap" type="application/xml" href="sitemap.xml">
 
 <!-- Fonts are self-hosted: no third-party request, no DNS/TLS round trip.
-     The page itself loads nothing from another host; the Cloudflare Web
-     Analytics beacon is injected at the edge, and the privacy notice at the
-     bottom of this file describes it. -->
+     The markup reaches exactly two other hosts — the Cloudflare Web Analytics
+     beacon, injected at the edge, and the AdSense loader below. The privacy
+     notice at the bottom of this file describes both. -->
 <link rel="preload" href="fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/space-grotesk-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- Google AdSense, publisher ca-pub-1351604242843112. Verbatim from the
+     AdSense dashboard: async, so it never blocks first paint.
+
+     This loads and then does nothing visible, and that is the intended state
+     today. The CSP above permits this host on script-src and nothing more, so
+     the ad iframes and creatives stay blocked; see the long note there for what
+     opening them would cost. Two other things are also still missing before an
+     ad could appear: ad units (or Auto ads) in the AdSense dashboard, and the
+     consent platform Google requires for EEA/UK visitors — the "Politica de
+     cookies" item in todo.txt.
+
+     No integrity="sha384-..." here: Google generates this file per request, so
+     a pinned SRI hash would fail every load. It is exempt from the self-host
+     rule in CLAUDE.md for the same reason the Cloudflare beacon is — the host
+     is named in the CSP and in the privacy notice. -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1351604242843112"
+     crossorigin="anonymous"></script>
 
 <script>
   /* Runs before first paint so the page never flashes the wrong theme or language. */
@@ -911,20 +948,23 @@ dialog .btn{margin-top:1.5rem}
 <dialog id="privacy">
   <h2 data-lang="pt">Sua privacidade, por princípio.</h2>
   <h2 data-lang="en">Privacy by principle.</h2>
-  <p data-lang="pt"><strong>O site.</strong> Não usamos cookies, publicidade nem scripts de rastreamento. As fontes e as imagens são servidas pelo próprio domínio, sem CDNs de terceiros.</p>
-  <p data-lang="en"><strong>The site.</strong> We use no cookies, advertising, or tracking scripts. Fonts and images are served from this domain itself, with no third-party CDNs.</p>
+  <p data-lang="pt"><strong>O site.</strong> Não temos scripts de rastreamento próprios, e as fontes e as imagens são servidas pelo próprio domínio, sem CDNs de terceiros. O que vem de fora são dois serviços, cada um descrito abaixo: a Cloudflare, que entrega o domínio, e o Google AdSense, que estamos habilitando para exibir anúncios.</p>
+  <p data-lang="en"><strong>The site.</strong> We run no tracking scripts of our own, and fonts and images are served from this domain itself, with no third-party CDNs. Two services do come from elsewhere, each described below: Cloudflare, which delivers the domain, and Google AdSense, which we are enabling in order to show advertising.</p>
 
-  <p data-lang="pt"><strong>No seu dispositivo.</strong> Guardamos apenas a sua escolha de tema e de idioma, no armazenamento local do navegador. Esses dados não saem do seu dispositivo e podem ser apagados limpando os dados do site.</p>
-  <p data-lang="en"><strong>On your device.</strong> We store only your theme and language choice, in your browser’s local storage. That data never leaves your device, and clearing this site’s data removes it.</p>
+  <p data-lang="pt"><strong>No seu dispositivo.</strong> De nossa parte, guardamos apenas a sua escolha de tema e de idioma, no armazenamento local do navegador. Esses dados não saem do seu dispositivo e podem ser apagados limpando os dados do site. Os cookies do Google AdSense são separados desses e estão descritos abaixo.</p>
+  <p data-lang="en"><strong>On your device.</strong> On our side we store only your theme and language choice, in your browser’s local storage. That data never leaves your device, and clearing this site’s data removes it. Google AdSense cookies are separate from these, and are described below.</p>
 
   <p data-lang="pt"><strong>Cloudflare.</strong> O domínio é entregue pela Cloudflare, que atua como CDN e camada de segurança e, para isso, processa dados de conexão — incluindo o endereço IP. A Cloudflare também insere o Web Analytics, um script de medição carregado de <code>static.cloudflareinsights.com</code>. Segundo a documentação da Cloudflare, ele não usa cookies nem armazenamento local para fins de analytics, não faz fingerprinting e não acompanha visitantes entre sites; produz apenas números agregados: visitas, páginas mais acessadas, país, tipo de dispositivo, origem do acesso e métricas de desempenho.</p>
   <p data-lang="en"><strong>Cloudflare.</strong> This domain is delivered by Cloudflare, which acts as CDN and security layer and therefore processes connection data — including your IP address. Cloudflare also injects Web Analytics, a measurement script loaded from <code>static.cloudflareinsights.com</code>. Per Cloudflare’s documentation it uses no cookies or client-side storage for analytics, performs no fingerprinting, and does not follow visitors across sites; it produces aggregate figures only: visits, top pages, country, device type, referrer, and performance metrics.</p>
 
-  <p data-lang="pt"><strong>Seus direitos.</strong> Não vendemos nem compartilhamos dados pessoais para publicidade. Em conformidade com a LGPD e o GDPR, qualquer uso futuro de armazenamento opcional dependerá do seu consentimento, e pedidos de acesso, correção ou exclusão podem ser enviados para <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
-  <p data-lang="en"><strong>Your rights.</strong> We do not sell or share personal data for advertising. In line with LGPD and GDPR, any future optional storage will require your consent, and requests for access, correction, or deletion can be sent to <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+  <p data-lang="pt"><strong>Google AdSense.</strong> Estamos habilitando a publicidade do Google neste site. O navegador já carrega um script de <code>pagead2.googlesyndication.com</code>, e a partir desse carregamento o Google pode gravar cookies e identificadores semelhantes no seu dispositivo. Anúncios ainda não aparecem: a política de segurança de conteúdo deste site bloqueia os quadros e as imagens de que eles dependem, e continuará bloqueando até que a nossa plataforma de consentimento esteja no ar. Quando passarem a aparecer, o Google e os parceiros de publicidade dele poderão usar esses cookies para exibir os anúncios, limitar quantas vezes você vê o mesmo, medir resultados e detectar fraude — e, se a personalização estiver ativa na sua conta do Google, para basear os anúncios nas suas visitas anteriores a este e a outros sites. Esse processamento é do Google, sob a política dele: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">como o Google usa cookies em anúncios</a>. Você pode desligar a personalização em <a href="https://myadcenter.google.com/" target="_blank" rel="noopener">Meu Centro de Anúncios</a> ou bloquear cookies de terceiros no navegador.</p>
+  <p data-lang="en"><strong>Google AdSense.</strong> We are enabling Google advertising on this site. Your browser already loads a script from <code>pagead2.googlesyndication.com</code>, and from that load onward Google may store cookies and similar identifiers on your device. No ads appear yet: this site's content security policy blocks the frames and images they depend on, and will keep blocking them until our consent platform is live. Once ads do appear, Google and its advertising partners may use those cookies to serve them, cap how often you see the same one, measure results, and detect fraud — and, if personalization is on in your Google account, to base the ads on your earlier visits to this and other sites. That processing is Google's, under Google's policy: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">how Google uses cookies in advertising</a>. You can turn personalization off at <a href="https://myadcenter.google.com/" target="_blank" rel="noopener">My Ad Center</a>, or block third-party cookies in your browser.</p>
 
-  <p class="updated" data-lang="pt">Atualizado em 10 de setembro de 2026.</p>
-  <p class="updated" data-lang="en">Last updated 10 September 2026.</p>
+  <p data-lang="pt"><strong>Seus direitos.</strong> Não vendemos dados pessoais. Exibir anúncios, porém, significa compartilhar dados com o Google e com os parceiros de publicidade dele — é o que a lei da Califórnia chama de <em>share</em> —, e os controles do parágrafo anterior são a forma de interromper isso. Em conformidade com a LGPD e o GDPR, pedidos de acesso, correção ou exclusão podem ser enviados para <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+  <p data-lang="en"><strong>Your rights.</strong> We do not sell personal data. Serving ads does mean sharing data with Google and its advertising partners — what California law calls a <em>share</em> — and the controls in the paragraph above are how you stop it. In line with LGPD and GDPR, requests for access, correction, or deletion can be sent to <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+
+  <p class="updated" data-lang="pt">Atualizado em 21 de setembro de 2026.</p>
+  <p class="updated" data-lang="en">Last updated 21 September 2026.</p>
   <button type="button" class="btn btn-primary" id="privacyClose">
     <span data-lang="pt">Fechar</span><span data-lang="en">Close</span>
   </button>

@@ -35,6 +35,14 @@ _SELF_HOST = _CNAME.read_text(encoding="utf-8").strip() if _CNAME.exists() else 
 ALLOWED_RESOURCE_HOSTS = {
     "static.cloudflareinsights.com",
     "cloudflareinsights.com",
+    # AdSense loader. Reviewed and accepted: the host is named in the CSP and
+    # described in the privacy dialog, and it cannot be self-hosted because
+    # Google generates the file per request. Note this entry admits the loader
+    # only — the hosts that actually draw ads (googleads.g.doubleclick.net,
+    # tpc.googlesyndication.com) are deliberately absent, and so are frame-src
+    # and a wider img-src. Adding them is what makes ads render, and it is the
+    # decision this list exists to slow down.
+    "pagead2.googlesyndication.com",
 } | ({_SELF_HOST} if _SELF_HOST else set())
 
 # Referrer values that are at least as private as what Observatory rewards.
