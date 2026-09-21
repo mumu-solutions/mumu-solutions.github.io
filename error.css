@@ -216,3 +216,14 @@ html[data-theme="light"] .wordmark{background-image:url(images/brand/logo-wordma
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
 }
+
+/* Analytics disclosure. These pages carry no privacy dialog, so the notice is
+   on the page itself — small, after the action, never competing with the
+   reason the visitor is here. */
+.privacy-note{
+  margin:2.25rem 0 0;
+  font-size:.75rem;
+  line-height:1.5;
+  color:var(--fg-muted);
+}
+.privacy-note+.wordmark{margin-top:1.25rem}

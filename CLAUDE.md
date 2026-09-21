@@ -31,6 +31,7 @@ they just silently cost the grade. `tools/check_security.py` enforces them.
 | `onclick=` and friends | Same reason, for `script-src` | `addEventListener` |
 | `javascript:` URLs | Blocked by the CSP; the link silently does nothing | A real handler |
 | A `<script src>` from a CDN | New third party, and the gate rejects unknown hosts | Self-host it under `/` |
+| A wildcard source (`*`, `https:`) | Lets in anything; `check_security.py` rejects both | Name the host |
 | `'unsafe-inline'` / `'unsafe-eval'` | Costs the CSP its top score | Hash the block (below) |
 
 **After editing any `<script>` or the `<style>` block**, their hashes change and
@@ -42,6 +43,24 @@ python3 tools/check_csp_hashes.py --fix
 ```
 
 Never hand-edit a `sha256-` value.
+
+### Third parties, and the one wildcard
+
+Four hosts are allowed, each named in `ALLOWED_RESOURCE_HOSTS` and in the
+privacy dialog: Cloudflare Insights, `pagead2.googlesyndication.com` (the
+AdSense loader — see `ADSENSE.md`), `www.googletagmanager.com` (the GA4 tag)
+and the site's own host from `CNAME`.
+
+`https://*.google-analytics.com` is the only wildcard the gate permits, listed
+in `ALLOWED_WILDCARD_SOURCES`. It is there because GA4 builds its collect host
+per visitor from a subdomain the server hands the tag — `region1`, `region2`,
+… — falling back to `www`, so literal hosts would drop some visitors' hits
+silently. A bare `*`, a scheme-only source like `https:`, and any unlisted
+wildcard are all still rejected; `analytics.js` and the comments in
+`check_security.py` carry the evidence.
+
+The gtag init lives in `analytics.js`, not inline, because a nonce needs a
+server and a hash would be unmaintained on the four error pages.
 
 **The error pages are outside all of this.** `check_security.py` and
 `check_csp_hashes.py` both read `index.html` only. `404.html` and its siblings

@@ -43,7 +43,38 @@ ALLOWED_RESOURCE_HOSTS = {
     # and a wider img-src. Adding them is what makes ads render, and it is the
     # decision this list exists to slow down.
     "pagead2.googlesyndication.com",
+    # Google Analytics 4 tag loader. The collect endpoint it talks to is not a
+    # script host and so does not belong in this set.
+    "www.googletagmanager.com",
 } | ({_SELF_HOST} if _SELF_HOST else set())
+
+# Sources that may contain a "*", and nothing else may.
+#
+# A bare "*" or a scheme-only source ("https:", "data:") lets in anything at
+# all, and refusing those is the entire point of the check below. A wildcard in
+# the leftmost label of a named host is a different animal: it cannot widen
+# past that one registrable domain.
+#
+# GA4 needs exactly one. The tag builds its collect host at runtime from a
+# subdomain the server hands it, falling back to "www" — in the shipped
+# gtag.js:
+#
+#     return "https://" + (Jk() || "www") + ".google-analytics.com/" + a
+#
+# That subdomain is regional (region1, region2, ...), it is chosen per visitor,
+# and it is not knowable here — so an allowlist of literal hosts would drop
+# hits for some visitors and silently under-report. Google documents
+# *.google-analytics.com for this reason.
+#
+# Adding to this set widens the policy. Do it only with the same kind of
+# evidence: the thing genuinely cannot be enumerated.
+ALLOWED_WILDCARD_SOURCES = {
+    "https://*.google-analytics.com",
+}
+
+# Only "https://*.label.tld" qualifies. "*", "*.com", "https://*" and
+# "https://example.*" all fail this and are rejected regardless of the set.
+WILDCARD_FORM = re.compile(r"^https://\*\.[a-z0-9-]+(?:\.[a-z0-9-]+)+$")
 
 # Referrer values that are at least as private as what Observatory rewards.
 ACCEPTABLE_REFERRER = {
@@ -84,7 +115,24 @@ def main() -> int:
             "default-src is 'none'", directives.get("default-src", "absent"))
     require("'unsafe-inline'" not in csp, "no 'unsafe-inline' anywhere")
     require("'unsafe-eval'" not in csp, "no 'unsafe-eval' anywhere")
-    require("*" not in re.sub(r"'[^']*'", "", csp), "no wildcard source")
+    # Every source carrying a "*" must be both well-formed as a subdomain
+    # wildcard and explicitly reviewed. "script-src *" and "script-src https:"
+    # still fail here: the first is not in the set and does not match the form,
+    # the second is caught by the scheme-only check that follows.
+    wild = [src
+            for directive in directives.values()
+            for src in directive.split()[1:]
+            if "*" in src
+            and not (WILDCARD_FORM.match(src) and src in ALLOWED_WILDCARD_SOURCES)]
+    require(not wild, "no unreviewed wildcard source", ", ".join(wild))
+
+    # A scheme-only source ("https:", "data:", "blob:") is as permissive as a
+    # bare wildcard and the old check never looked for one.
+    scheme_only = [src
+                   for directive in directives.values()
+                   for src in directive.split()[1:]
+                   if re.fullmatch(r"[a-z][a-z0-9+.-]*:", src)]
+    require(not scheme_only, "no scheme-only source", ", ".join(scheme_only))
     for d in ("base-uri", "object-src", "form-action", "frame-ancestors",
               "script-src", "style-src", "img-src", "font-src", "connect-src"):
         require(d in directives, f"{d} is declared")

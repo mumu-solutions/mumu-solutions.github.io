@@ -66,6 +66,14 @@
      wants 'unsafe-inline' and 'unsafe-eval', which this policy refuses outright
      and tools/check_security.py asserts against.
 
+     Google Analytics adds www.googletagmanager.com to script-src and
+     www.google-analytics.com to connect-src, and nothing else. Google's CSP
+     guide also lists *.google.com, *.google.<TLD> and *.g.doubleclick.net —
+     those are for Google Signals and Ads remarketing, which are not enabled
+     here, so adding them would widen the policy for features the site does
+     not use. Do not "complete" the list from that page. The gtag init lives
+     in analytics.js rather than an inline block; the file explains why.
+
      So: the loader is permitted, ad rendering is not. Opening frame-src and
      img-src to Google is the change that makes ads appear, and it costs the
      site its A+ — a deliberate decision to take in the open, not something to
@@ -83,7 +91,7 @@
      The rest cannot be expressed here at all — HSTS, X-Content-Type-Options,
      COOP, COEP, CORP and the HTTP->HTTPS redirect are response headers or infra.
      See SECURITY-HEADERS.md for the Cloudflare side. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self' 'sha256-xZDVowr6Cb4wM7ewpKk8dXQqP7k1Vl9U8WJw2OFStxI='; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com https://pagead2.googlesyndication.com; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' https://*.google-analytics.com; font-src 'self'; style-src 'self' 'sha256-xZDVowr6Cb4wM7ewpKk8dXQqP7k1Vl9U8WJw2OFStxI='; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-4SJ9Anx42R9Z91oHPEDdpNmdtPGkvJgNVtPo4MUcTmE=' https://static.cloudflareinsights.com https://pagead2.googlesyndication.com https://www.googletagmanager.com; connect-src 'self' https://cloudflareinsights.com https://*.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'none'; upgrade-insecure-requests">
 
 <!-- Referrer-Policy. The meta form is honoured by browsers; the header form is
      set in Cloudflare too, so a scanner sees it. -->
@@ -105,7 +113,7 @@
      guessing from a commit: curl the page and read it. The two must agree —
      tools/check_version.py enforces that on every deploy. Do not edit this by
      hand; edit VERSION and run the script with --sync. -->
-<meta name="version" content="1.3.1">
+<meta name="version" content="1.4.0">
 <link rel="canonical" href="https://mumu.solutions/">
 <!-- No hreflang alternates on purpose. Both languages live in this one
      document, so ?lang=en is the same URL with the same canonical — an
@@ -170,6 +178,16 @@
      is named in the CSP and in the privacy notice. -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1351604242843112"
      crossorigin="anonymous"></script>
+
+<!-- Google tag (gtag.js) — GA4 property G-QV4DCF3HTN.
+     Google's snippet ships the init inline; it is in analytics.js here because
+     this page's CSP has no 'unsafe-inline' and the four error pages cannot
+     carry a maintainable hash. See analytics.js for the full reasoning.
+     Order is load-bearing: analytics.js is render-blocking and defines
+     dataLayer and gtag(), the tag below is async, so Google's script always
+     finds them ready. Do not add defer to the second line. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QV4DCF3HTN"></script>
+<script src="analytics.js"></script>
 
 <script>
   /* Runs before first paint so the page never flashes the wrong theme or language. */
@@ -954,20 +972,23 @@ dialog .btn{margin-top:1.5rem}
 <dialog id="privacy">
   <h2 data-lang="pt">Sua privacidade, por princípio.</h2>
   <h2 data-lang="en">Privacy by principle.</h2>
-  <p data-lang="pt"><strong>O site.</strong> Não temos scripts de rastreamento próprios, e as fontes e as imagens são servidas pelo próprio domínio, sem CDNs de terceiros. O que vem de fora são dois serviços, cada um descrito abaixo: a Cloudflare, que entrega o domínio, e o Google AdSense, que estamos habilitando para exibir anúncios.</p>
-  <p data-lang="en"><strong>The site.</strong> We run no tracking scripts of our own, and fonts and images are served from this domain itself, with no third-party CDNs. Two services do come from elsewhere, each described below: Cloudflare, which delivers the domain, and Google AdSense, which we are enabling in order to show advertising.</p>
+  <p data-lang="pt"><strong>O site.</strong> Não escrevemos scripts de rastreamento próprios, e as fontes e as imagens são servidas pelo próprio domínio, sem CDNs de terceiros. O que vem de fora são três serviços do tipo, cada um descrito abaixo: a Cloudflare, que entrega o domínio; o Google Analytics, que mede o uso das páginas; e o Google AdSense, que estamos habilitando para exibir anúncios. Os dois primeiros funcionam hoje em todas as páginas, inclusive nas de erro.</p>
+  <p data-lang="en"><strong>The site.</strong> We write no tracking scripts of our own, and fonts and images are served from this domain itself, with no third-party CDNs. Three services of that kind do come from elsewhere, each described below: Cloudflare, which delivers the domain; Google Analytics, which measures page use; and Google AdSense, which we are enabling in order to show advertising. The first two are active today on every page, including the error pages.</p>
 
-  <p data-lang="pt"><strong>No seu dispositivo.</strong> De nossa parte, guardamos apenas a sua escolha de tema e de idioma, no armazenamento local do navegador. Esses dados não saem do seu dispositivo e podem ser apagados limpando os dados do site. Os cookies do Google AdSense são separados desses e estão descritos abaixo.</p>
-  <p data-lang="en"><strong>On your device.</strong> On our side we store only your theme and language choice, in your browser’s local storage. That data never leaves your device, and clearing this site’s data removes it. Google AdSense cookies are separate from these, and are described below.</p>
+  <p data-lang="pt"><strong>No seu dispositivo.</strong> De nossa parte, guardamos apenas a sua escolha de tema e de idioma, no armazenamento local do navegador. Esses dados não saem do seu dispositivo e podem ser apagados limpando os dados do site. Os cookies do Google Analytics e do Google AdSense são separados desses e estão descritos abaixo.</p>
+  <p data-lang="en"><strong>On your device.</strong> On our side we store only your theme and language choice, in your browser’s local storage. That data never leaves your device, and clearing this site’s data removes it. Google Analytics and Google AdSense cookies are separate from these, and are described below.</p>
 
   <p data-lang="pt"><strong>Cloudflare.</strong> O domínio é entregue pela Cloudflare, que atua como CDN e camada de segurança e, para isso, processa dados de conexão — incluindo o endereço IP. A Cloudflare também insere o Web Analytics, um script de medição carregado de <code>static.cloudflareinsights.com</code>. Segundo a documentação da Cloudflare, ele não usa cookies nem armazenamento local para fins de analytics, não faz fingerprinting e não acompanha visitantes entre sites; produz apenas números agregados: visitas, páginas mais acessadas, país, tipo de dispositivo, origem do acesso e métricas de desempenho.</p>
   <p data-lang="en"><strong>Cloudflare.</strong> This domain is delivered by Cloudflare, which acts as CDN and security layer and therefore processes connection data — including your IP address. Cloudflare also injects Web Analytics, a measurement script loaded from <code>static.cloudflareinsights.com</code>. Per Cloudflare’s documentation it uses no cookies or client-side storage for analytics, performs no fingerprinting, and does not follow visitors across sites; it produces aggregate figures only: visits, top pages, country, device type, referrer, and performance metrics.</p>
 
+  <p data-lang="pt"><strong>Google Analytics.</strong> Medimos o uso do site com o Google Analytics 4 (propriedade <code>G-QV4DCF3HTN</code>). O navegador carrega um script de <code>googletagmanager.com</code> e envia os eventos para <code>google-analytics.com</code>, em todas as páginas — inclusive nas de erro. O Google grava cookies próprios no seu dispositivo, normalmente <code>_ga</code> e <code>_ga_&lt;ID&gt;</code>, que geram um identificador aleatório para reconhecer visitas repetidas; o padrão do Google é expirá-los em dois anos. Também é processado o seu endereço IP, que o Google usa para derivar uma localização aproximada e, segundo a documentação dele, não registra nem armazena no Analytics 4. O que olhamos são números agregados: páginas mais vistas, origem do acesso, tipo de dispositivo, país e desempenho. Não cruzamos esses dados com nenhum cadastro e não temos como identificar você por eles. A política aplicável é a do Google: <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">como o Google usa dados de sites que o utilizam</a>. Para sair, instale o <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">complemento de desativação do Google Analytics</a> ou bloqueie os cookies deste site no navegador.</p>
+  <p data-lang="en"><strong>Google Analytics.</strong> We measure use of the site with Google Analytics 4 (property <code>G-QV4DCF3HTN</code>). Your browser loads a script from <code>googletagmanager.com</code> and sends events to <code>google-analytics.com</code>, on every page — the error pages included. Google sets its own cookies on your device, normally <code>_ga</code> and <code>_ga_&lt;ID&gt;</code>, which hold a random identifier used to recognise repeat visits; Google's default is to expire them after two years. Your IP address is also processed, which Google uses to derive an approximate location and, per its documentation, does not log or store in Analytics 4. What we look at is aggregate: most-viewed pages, referrer, device type, country and performance. We do not join any of it to a customer record, and it gives us no way to identify you. The applicable policy is Google's: <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">how Google uses data from sites that use it</a>. To opt out, install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics opt-out add-on</a> or block this site's cookies in your browser.</p>
+
   <p data-lang="pt"><strong>Google AdSense.</strong> Estamos habilitando a publicidade do Google neste site. O navegador já carrega um script de <code>pagead2.googlesyndication.com</code>, e a partir desse carregamento o Google pode gravar cookies e identificadores semelhantes no seu dispositivo. Anúncios ainda não aparecem: a política de segurança de conteúdo deste site bloqueia os quadros e as imagens de que eles dependem, e continuará bloqueando até que a nossa plataforma de consentimento esteja no ar. Quando passarem a aparecer, o Google e os parceiros de publicidade dele poderão usar esses cookies para exibir os anúncios, limitar quantas vezes você vê o mesmo, medir resultados e detectar fraude — e, se a personalização estiver ativa na sua conta do Google, para basear os anúncios nas suas visitas anteriores a este e a outros sites. Esse processamento é do Google, sob a política dele: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">como o Google usa cookies em anúncios</a>. Você pode desligar a personalização em <a href="https://myadcenter.google.com/" target="_blank" rel="noopener">Meu Centro de Anúncios</a> ou bloquear cookies de terceiros no navegador.</p>
   <p data-lang="en"><strong>Google AdSense.</strong> We are enabling Google advertising on this site. Your browser already loads a script from <code>pagead2.googlesyndication.com</code>, and from that load onward Google may store cookies and similar identifiers on your device. No ads appear yet: this site's content security policy blocks the frames and images they depend on, and will keep blocking them until our consent platform is live. Once ads do appear, Google and its advertising partners may use those cookies to serve them, cap how often you see the same one, measure results, and detect fraud — and, if personalization is on in your Google account, to base the ads on your earlier visits to this and other sites. That processing is Google's, under Google's policy: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">how Google uses cookies in advertising</a>. You can turn personalization off at <a href="https://myadcenter.google.com/" target="_blank" rel="noopener">My Ad Center</a>, or block third-party cookies in your browser.</p>
 
-  <p data-lang="pt"><strong>Seus direitos.</strong> Não vendemos dados pessoais. Exibir anúncios, porém, significa compartilhar dados com o Google e com os parceiros de publicidade dele — é o que a lei da Califórnia chama de <em>share</em> —, e os controles do parágrafo anterior são a forma de interromper isso. Em conformidade com a LGPD e o GDPR, pedidos de acesso, correção ou exclusão podem ser enviados para <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
-  <p data-lang="en"><strong>Your rights.</strong> We do not sell personal data. Serving ads does mean sharing data with Google and its advertising partners — what California law calls a <em>share</em> — and the controls in the paragraph above are how you stop it. In line with LGPD and GDPR, requests for access, correction, or deletion can be sent to <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+  <p data-lang="pt"><strong>Seus direitos.</strong> Não vendemos dados pessoais. Exibir anúncios, porém, significa compartilhar dados com o Google e com os parceiros de publicidade dele — é o que a lei da Califórnia chama de <em>share</em> —, e os controles do parágrafo anterior são a forma de interromper isso. A medição do Google Analytics também envia dados ao Google, na condição de operador. Hoje esta página não exibe um aviso de consentimento: a análise começa assim que a página carrega, e os controles descritos acima — o complemento de desativação e o bloqueio de cookies — são a forma de recusar, a qualquer momento. Em conformidade com a LGPD e o GDPR, pedidos de acesso, correção ou exclusão podem ser enviados para <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+  <p data-lang="en"><strong>Your rights.</strong> We do not sell personal data. Serving ads does mean sharing data with Google and its advertising partners — what California law calls a <em>share</em> — and the controls in the paragraph above are how you stop it. Google Analytics measurement also sends data to Google, acting as a processor. This page shows no consent banner today: measurement starts as soon as the page loads, and the controls described above — the opt-out add-on and blocking cookies — are how you decline, at any time. In line with LGPD and GDPR, requests for access, correction, or deletion can be sent to <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
 
   <p class="updated" data-lang="pt">Atualizado em 21 de setembro de 2026.</p>
   <p class="updated" data-lang="en">Last updated 21 September 2026.</p>
