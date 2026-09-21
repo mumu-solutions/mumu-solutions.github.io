@@ -2,8 +2,10 @@
 # Updated: 2026-09-21
 #
 # Policy: only the homepage is indexable. Everything else is denied by the
-# Disallow below and opened back up case by case. /llms.txt is one of those
-# exceptions — a file written for crawlers is useless if robots.txt hides it.
+# Disallow below and opened back up case by case. /llms.txt and /ads.txt are
+# two of those exceptions — a file written for crawlers is useless if
+# robots.txt hides it, and AdSense flags the domain while ads.txt is
+# unreachable.
 #
 # Two things must stay allowed for the site to work correctly in search and
 # in social previews:
@@ -20,6 +22,7 @@ Allow: /images/
 Allow: /fonts/
 Allow: /sitemap.xml
 Allow: /llms.txt
+Allow: /ads.txt
 Disallow: /
 
 # Social crawlers need the Open Graph image, not just the page.

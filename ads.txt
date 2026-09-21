@@ -1,0 +1,13 @@
+# ads.txt — MUMU Solutions
+# Updated: 2026-09-21
+#
+# IAB Tech Lab Authorized Digital Sellers. It names who is allowed to sell ad
+# inventory on this domain; a buyer that finds a seller here who is not listed
+# treats the impression as counterfeit. AdSense reports "Earnings at risk"
+# until this file is reachable at https://www.mumu.solutions/ads.txt, so
+# robots.txt carries an explicit Allow for it — the User-agent: * group ends
+# in Disallow: / and would otherwise hide it.
+#
+# Line copied from the AdSense dashboard (Sites -> Ads.txt). Fields are
+# exchange domain, publisher ID, relationship, certification authority ID.
+google.com, pub-1351604242843112, DIRECT, f08c47fec0942fa0
