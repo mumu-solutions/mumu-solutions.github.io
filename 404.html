@@ -3,11 +3,17 @@
   404 — page not found.
 
   This is the only error page GitHub Pages serves by itself: it looks for
-  /404.html and returns it for any path it cannot resolve. 401.html, 403.html
-  and 500.html are its siblings in markup but NOT in behaviour — a static
+  /404.html and returns it for any path it cannot resolve. error-401.html, error-403.html
+  and error-500.html are its siblings in markup but NOT in behaviour — a static
   origin never emits 401 or 403, and Pages answers 5xx from its own error path
   without reading this repository. Serving those three needs Cloudflare Custom
   Pages; until that is wired, they are reachable only by typing the URL.
+
+  They are named error-4xx.html, not 4xx.html, because GitHub Pages RESERVES
+  /401.html and answers it with its own "Authorization Required" page — our
+  file was deployed and simply shadowed, returning 200 with Github's markup.
+  403 and 500 served fine under the bare names, but they are prefixed too so
+  the three stay consistent and out of that namespace. Do not rename them back.
 
   Theme and language work as they do on the site, sharing its localStorage
   keys, so a choice made on the home page still holds here. The degradation is

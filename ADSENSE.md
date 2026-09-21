@@ -48,8 +48,10 @@ grade falls below `.github/observatory-floor`.
 
 Two constraints for that edit, both easy to trip:
 
-- `check_security.py` rejects **any wildcard source**, so hosts must be
-  enumerated literally. `*.googlesyndication.com` fails the gate.
+- `check_security.py` rejects any wildcard that is not in
+  `ALLOWED_WILDCARD_SOURCES`, which holds one entry for Google Analytics. So
+  `*.googlesyndication.com` fails the gate; enumerate the ad hosts literally,
+  or make the same kind of case the analytics one makes.
 - every new host also needs an entry in `ALLOWED_RESOURCE_HOSTS`, or the gate
   rejects it as an unreviewed third party.
 
@@ -99,7 +101,7 @@ h=[x for x in s if x["seller_id"]=="pub-1351604242843112"]; print(h or "not list
 
 ## The error pages carry the meta, not the loader
 
-`404.html`, `401.html`, `403.html` and `500.html` each carry
+`404.html`, `error-401.html`, `error-403.html` and `error-500.html` each carry
 `<meta name="google-adsense-account">` — it proves the domain and serves no ad,
 so there is no reason for it to be absent. None of them carries the loader
 `<script>`, and that is deliberate. Google Publisher Policies, under Inventory
@@ -121,10 +123,10 @@ on `index.html` would silently switch them on here too, if the loader were
 present. Keeping it off the error pages means that decision cannot leak into a
 policy breach by accident.
 
-The error pages run only `error.js`, their own same-origin script for the theme
-and language controls, under `script-src 'self'`. That allows no third-party
-host, so adding the loader means widening the CSP on four more files first —
-which is the speed bump this note is meant to be.
+The error pages' `script-src` is `'self' https://www.googletagmanager.com` —
+same-origin plus the analytics tag, and no ad host. Adding the loader means
+widening the CSP on four more files first, which is the speed bump this note is
+meant to be.
 
 ## Still open
 

@@ -150,8 +150,10 @@ dashboard settings, documented in `SECURITY-HEADERS.md`.
 VERSION             semver source of truth; mirrored into index.html
 index.html          the site
 404.html            served by Pages for any unresolved path
-401/403/500.html    same design; NOT auto-served — see ADSENSE.md
-error.css           the error pages' stylesheet (they run no JS)
+error-401/403/500.html  same design; NOT auto-served, and NOT named
+                    401.html: GitHub Pages reserves that path
+error.css/error.js  the error pages' styles and their theme+language controls
+analytics.js        GA4 init, shared by every page
 llms.txt            summary for AI crawlers; keep in step with #products
 sitemap.xml         canonical URL + section fragments; bump lastmod on change
 robots.txt          crawl rules (Cloudflare prepends its own block at the edge)
