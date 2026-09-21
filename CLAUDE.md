@@ -45,10 +45,17 @@ Never hand-edit a `sha256-` value.
 
 **The error pages are outside all of this.** `check_security.py` and
 `check_csp_hashes.py` both read `index.html` only. `404.html` and its siblings
-carry their own, stricter CSP — `script-src 'none'`, `style-src 'self'` — which
-needs no hash precisely because they have no inline `<style>` or `<script>`.
-Keep it that way: the moment one of them gains an inline block, it acquires a
-hash that no tool regenerates and no gate checks. Put the rule in `error.css`.
+carry their own CSP with a bare `style-src 'self'` and `script-src 'self'`,
+which needs no hash precisely because they have no inline `<style>` or
+`<script>`. Keep it that way: the moment one of them gains an inline block, it
+acquires a hash that no tool regenerates and no gate checks. Put the rule in
+`error.css` and the behaviour in `error.js`.
+
+Those two files are also why the error pages degrade better than `index.html`:
+`<html>` there carries `data-language="pt"` and no `data-theme`, so with
+JavaScript off they still render Portuguese in the visitor's OS theme.
+`index.html` hides every `[data-lang]` lacking an `.on` class its script adds,
+so it shows nothing at all. Do not copy that pattern into an error page.
 
 `frame-ancestors 'none'` is in the CSP but **browsers ignore it in a `<meta>`
 tag** — this was tested, and the live site is currently framable. It is kept

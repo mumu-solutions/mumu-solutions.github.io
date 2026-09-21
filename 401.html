@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <!--
-  401 — unauthorized. Sibling of 404.html; read the comment there for why these
-  pages carry no JavaScript and show both languages at once.
+  401 — unauthorized. Sibling of 404.html; read the comment there for how the
+  theme and language controls work and how these pages degrade without script.
 
   NOT served automatically. A static GitHub Pages origin never emits 401, so
   this page is reachable only by typing the URL or by Cloudflare Custom Pages
-  pointing at it. See ADSENSE.md and the commit that added it.
+  pointing at it.
+
+  The copy avoids telling anyone to "sign in": this site has no login, so that
+  would be advice nobody can act on. A 401 reaching this domain almost
+  certainly belongs to an internal tool, and the useful thing to say is that
+  the public site is not where the credential is expected.
 -->
-<html lang="pt-BR">
+<html lang="pt-BR" data-language="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<title>401 — Não autenticado · MUMU Solutions</title>
+<title>401 — Acesso restrito · MUMU Solutions</title>
+<meta name="title-pt" content="401 — Acesso restrito · MUMU Solutions">
+<meta name="title-en" content="401 — Restricted area · MUMU Solutions">
+
 <meta name="robots" content="noindex, follow">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#07090c" media="(prefers-color-scheme: dark)">
@@ -27,10 +35,21 @@
 <link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/brand/apple-touch-icon-180.png">
 <link rel="stylesheet" href="error.css">
+<script src="error.js"></script>
 </head>
 <body>
 
 <main class="card">
+  <div class="tools">
+    <div class="switch" id="langGroup" role="group" aria-label="Idioma">
+      <button type="button" id="langPt" aria-pressed="true" lang="pt-BR">PT</button>
+      <button type="button" id="langEn" aria-pressed="false" lang="en">EN</button>
+    </div>
+    <button type="button" class="icon-btn" id="themeBtn" aria-label="Alternar tema claro e escuro">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </div>
+
   <!-- "doubt" — the wave mark. A question about who you are, not a refusal. -->
   <picture>
     <source srcset="images/mumia/mumia-face-doubt-dark-256.png" media="(prefers-color-scheme: dark)">
@@ -38,21 +57,22 @@
          alt="MUMia, o mascote da MUMU Solutions, com uma onda no display do chapéu.">
   </picture>
 
-  <span class="code">Erro 401</span>
+  <span class="code" data-lang="pt">Erro 401</span>
+  <span class="code" data-lang="en">Error 401</span>
 
-  <h1>Precisamos saber quem é você.</h1>
-  <p class="en">We need to know who you are.</p>
+  <div data-lang="pt">
+    <h1>Esta área é restrita.</h1>
+    <p class="say">O pedido chegou sem uma credencial válida. Este site não tem área de login pública, então o endereço provavelmente pertence a uma ferramenta interna — confira o link que você recebeu.</p>
+    <a class="btn" href="/">Voltar ao início</a>
+  </div>
 
-  <p class="say">Esta página pede autenticação e nenhuma credencial válida chegou junto com o pedido. Se você deveria ter acesso, entre na sua conta e tente de novo.</p>
-  <p class="say-en">This page requires authentication and no valid credentials came with the request. If you should have access, sign in and try again.</p>
+  <div data-lang="en">
+    <h1>This area is restricted.</h1>
+    <p class="say">The request arrived without valid credentials. This site has no public sign-in, so the address most likely belongs to an internal tool — check the link you were given.</p>
+    <a class="btn" href="/">Back home</a>
+  </div>
 
-  <a class="btn" href="/">Voltar ao início · Back home</a>
-
-  <picture>
-    <source srcset="images/brand/logo-wordmark-dark-480.png" media="(prefers-color-scheme: light)">
-    <img class="wordmark" src="images/brand/logo-wordmark-light-480.png" width="480" height="93"
-         alt="MUMU Solutions">
-  </picture>
+  <span class="wordmark" role="img" aria-label="MUMU Solutions"></span>
 </main>
 
 </body>

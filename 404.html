@@ -8,29 +8,37 @@
   origin never emits 401 or 403, and Pages answers 5xx from its own error path
   without reading this repository. Serving those three needs Cloudflare Custom
   Pages; until that is wired, they are reachable only by typing the URL.
-  ADSENSE.md and the commit that added these files record the reasoning.
 
-  No JavaScript, on purpose. An error page is what a visitor gets when
-  something has already gone wrong; making it depend on script adds a way for
-  it to fail too. Consequences, both handled in error.css:
-    * the theme follows prefers-color-scheme, not the site's toggle
-    * both languages are shown, rather than data-lang pairs a script switches
+  Theme and language work as they do on the site, sharing its localStorage
+  keys, so a choice made on the home page still holds here. The degradation is
+  deliberately better than index.html's: <html> carries data-language="pt" in
+  the markup and NO data-theme, so with JavaScript off this page still shows
+  Portuguese in the visitor's OS theme, where index.html would show nothing.
+  See the comments in error.css and error.js.
 
-  The mascot is MUMia, from mumu-solutions/mumu-mumia at v1.0.0. Expression
-  per page is a deliberate mapping, not decoration — see images/mumia/MANIFEST.json.
+  Exactly one language is visible at a time. Both are in the markup; CSS hides
+  the one that is not selected.
+
+  The mascot is MUMia, from mumu-solutions/mumu-mumia at v1.0.0. Expression per
+  page is a deliberate mapping — see images/mumia/MANIFEST.json.
 -->
-<html lang="pt-BR">
+<html lang="pt-BR" data-language="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Stricter than index.html's, because this page needs less: no inline style
-     to hash, and script-src is 'none' rather than a hash list. Everything here
-     is served from this origin. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
+<!-- Stricter than index.html's: no inline style or script to hash, so both
+     script-src and style-src are a bare 'self'. Everything is same-origin. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 
 <title>404 — Página não encontrada · MUMU Solutions</title>
+<!-- error.js swaps document.title from these when the language changes, so the
+     tab and any bookmark follow the switch. Keeping the strings in the page
+     means error.js holds no per-page copy. -->
+<meta name="title-pt" content="404 — Página não encontrada · MUMU Solutions">
+<meta name="title-en" content="404 — Page not found · MUMU Solutions">
+
 <!-- noindex: an error page in the index is a bad search result. robots.txt
      already blocks this path via the blanket Disallow, but a crawler that
      reaches the URL another way reads the tag rather than the file. -->
@@ -51,10 +59,22 @@
 <link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/brand/apple-touch-icon-180.png">
 <link rel="stylesheet" href="error.css">
+<!-- No defer: this must set the theme before first paint. -->
+<script src="error.js"></script>
 </head>
 <body>
 
 <main class="card">
+  <div class="tools">
+    <div class="switch" id="langGroup" role="group" aria-label="Idioma">
+      <button type="button" id="langPt" aria-pressed="true" lang="pt-BR">PT</button>
+      <button type="button" id="langEn" aria-pressed="false" lang="en">EN</button>
+    </div>
+    <button type="button" class="icon-btn" id="themeBtn" aria-label="Alternar tema claro e escuro">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </div>
+
   <!-- "lost" — the hat display shows the ellipsis mark. The face never changes;
        the expression lives on the hat (mumu-mumia COMPLIANCE 3.4). -->
   <picture>
@@ -63,25 +83,25 @@
          alt="MUMia, o mascote da MUMU Solutions, com reticências no display do chapéu.">
   </picture>
 
-  <span class="code">Erro 404</span>
+  <span class="code" data-lang="pt">Erro 404</span>
+  <span class="code" data-lang="en">Error 404</span>
 
-  <h1>Esta página não existe.</h1>
-  <p class="en">This page doesn’t exist.</p>
+  <div data-lang="pt">
+    <h1>Esta página não existe.</h1>
+    <p class="say">O endereço pode ter mudado, ou o link que trouxe você até aqui está quebrado. O conteúdo do site continua todo na página inicial.</p>
+    <a class="btn" href="/">Voltar ao início</a>
+  </div>
 
-  <p class="say">O endereço pode ter mudado, ou o link que trouxe você até aqui está quebrado. O conteúdo do site continua todo na página inicial.</p>
-  <p class="say-en">The address may have changed, or the link that brought you here is broken. Everything on this site lives on the home page.</p>
+  <div data-lang="en">
+    <h1>This page doesn’t exist.</h1>
+    <p class="say">The address may have changed, or the link that brought you here is broken. Everything on this site lives on the home page.</p>
+    <a class="btn" href="/">Back home</a>
+  </div>
 
-  <a class="btn" href="/">Voltar ao início · Back home</a>
-
-  <!-- Careful: the wordmark's light/dark naming is the opposite of the
-       mascot's. "light" is the light-COLOURED mark, for a dark ground — which
-       is how index.html uses it (.brand default = light-480, light theme =
-       dark-480). Swapping these makes the logo invisible, not wrong-coloured. -->
-  <picture>
-    <source srcset="images/brand/logo-wordmark-dark-480.png" media="(prefers-color-scheme: light)">
-    <img class="wordmark" src="images/brand/logo-wordmark-light-480.png" width="480" height="93"
-         alt="MUMU Solutions">
-  </picture>
+  <!-- Drawn by error.css so it follows the theme BUTTON, not just the OS. The
+       light/dark naming there is the opposite of the mascot's: "light" is the
+       light-COLOURED mark, for a dark ground. -->
+  <span class="wordmark" role="img" aria-label="MUMU Solutions"></span>
 </main>
 
 </body>

@@ -1,25 +1,32 @@
 <!DOCTYPE html>
 <!--
-  500 — server error. Sibling of 404.html; read the comment there for why these
-  pages carry no JavaScript and show both languages at once.
+  500 — server error. Sibling of 404.html; read the comment there for how the
+  theme and language controls work and how these pages degrade without script.
 
   NOT served automatically. GitHub Pages answers 5xx from its own error path
   and never reads this file, so it is reachable only by typing the URL or by
-  Cloudflare Custom Pages pointing at it. See ADSENSE.md and the commit that
-  added it.
+  Cloudflare Custom Pages pointing at it.
 
-  Keep this page's dependencies to a minimum on purpose: it exists for the
-  moment something is already failing, so every extra request is another thing
-  that can fail with it. error.css, two self-hosted fonts, two local images.
+  No contact address here, deliberately. A 500 is ours to notice and ours to
+  fix; asking the visitor to report it puts our monitoring on their shoulders,
+  and an address on a page that appears when the server is unwell invites a
+  mailbox full of duplicates of something we already know.
+
+  Keep this page's dependencies minimal: it exists for the moment something is
+  already failing, so every extra request is another thing that can fail with
+  it. error.css, error.js, two self-hosted fonts, two local images.
 -->
-<html lang="pt-BR">
+<html lang="pt-BR" data-language="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 
 <title>500 — Erro no servidor · MUMU Solutions</title>
+<meta name="title-pt" content="500 — Erro no servidor · MUMU Solutions">
+<meta name="title-en" content="500 — Server error · MUMU Solutions">
+
 <meta name="robots" content="noindex, follow">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#07090c" media="(prefers-color-scheme: dark)">
@@ -32,10 +39,21 @@
 <link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/brand/apple-touch-icon-180.png">
 <link rel="stylesheet" href="error.css">
+<script src="error.js"></script>
 </head>
 <body>
 
 <main class="card">
+  <div class="tools">
+    <div class="switch" id="langGroup" role="group" aria-label="Idioma">
+      <button type="button" id="langPt" aria-pressed="true" lang="pt-BR">PT</button>
+      <button type="button" id="langEn" aria-pressed="false" lang="en">EN</button>
+    </div>
+    <button type="button" class="icon-btn" id="themeBtn" aria-label="Alternar tema claro e escuro">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </div>
+
   <!-- "focus" — the target mark. The message is "we are on it", not "panic";
        alert is already carrying 403 and a 500 the visitor cannot act on should
        not read as an accusation. -->
@@ -45,21 +63,22 @@
          alt="MUMia, o mascote da MUMU Solutions, com um alvo no display do chapéu.">
   </picture>
 
-  <span class="code">Erro 500</span>
+  <span class="code" data-lang="pt">Erro 500</span>
+  <span class="code" data-lang="en">Error 500</span>
 
-  <h1>Alguma coisa quebrou do nosso lado.</h1>
-  <p class="en">Something broke on our side.</p>
+  <div data-lang="pt">
+    <h1>Alguma coisa quebrou do nosso lado.</h1>
+    <p class="say">O erro é nosso, não seu — não há nada para você mudar. Já estamos sabendo. Tente de novo em alguns instantes.</p>
+    <a class="btn" href="/">Voltar ao início</a>
+  </div>
 
-  <p class="say">O erro é nosso, não seu — você não precisa mudar nada. Tente de novo em alguns instantes; se persistir, conte para <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
-  <p class="say-en">The error is ours, not yours — there’s nothing for you to change. Try again shortly; if it persists, tell <a href="mailto:fale.com@mumu.solutions">fale.com@mumu.solutions</a>.</p>
+  <div data-lang="en">
+    <h1>Something broke on our side.</h1>
+    <p class="say">The error is ours, not yours — there’s nothing for you to change. We already know about it. Try again in a moment.</p>
+    <a class="btn" href="/">Back home</a>
+  </div>
 
-  <a class="btn" href="/">Voltar ao início · Back home</a>
-
-  <picture>
-    <source srcset="images/brand/logo-wordmark-dark-480.png" media="(prefers-color-scheme: light)">
-    <img class="wordmark" src="images/brand/logo-wordmark-light-480.png" width="480" height="93"
-         alt="MUMU Solutions">
-  </picture>
+  <span class="wordmark" role="img" aria-label="MUMU Solutions"></span>
 </main>
 
 </body>

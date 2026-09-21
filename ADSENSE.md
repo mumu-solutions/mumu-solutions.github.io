@@ -121,9 +121,10 @@ on `index.html` would silently switch them on here too, if the loader were
 present. Keeping it off the error pages means that decision cannot leak into a
 policy breach by accident.
 
-The error pages also run **no JavaScript at all**, and their CSP sets
-`script-src 'none'`. Adding the loader means weakening that line first, which
-is the speed bump this note is meant to be.
+The error pages run only `error.js`, their own same-origin script for the theme
+and language controls, under `script-src 'self'`. That allows no third-party
+host, so adding the loader means widening the CSP on four more files first —
+which is the speed bump this note is meant to be.
 
 ## Still open
 
