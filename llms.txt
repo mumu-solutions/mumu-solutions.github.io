@@ -44,6 +44,8 @@ com o tempo — consulte https://mumu.solutions/#products para o estado atual.
   documentos separados.
 - O idioma declarado é pt-BR. O conteúdo em inglês está no mesmo HTML, em elementos
   irmãos marcados com `data-lang`.
+- `robots.txt` declara um `Content-Signal`: busca e uso como entrada de IA
+  (citação, RAG) são bem-vindos; treinamento de modelos, não.
 - `robots.txt` libera a home, `/images/`, `/fonts/`, `/sitemap.xml`, `/ads.txt`,
   os arquivos `.css` e `.js` que as páginas carregam, e este arquivo; o resto
   está bloqueado deliberadamente. O

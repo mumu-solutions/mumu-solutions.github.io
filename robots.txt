@@ -1,5 +1,5 @@
 # robots.txt — MUMU Solutions
-# Updated: 2026-09-21b
+# Updated: 2026-09-21c
 #
 # Policy: only the homepage is indexable. Everything else is denied by the
 # Disallow below and opened back up case by case. /llms.txt and /ads.txt are
@@ -21,7 +21,21 @@
 #   * the social crawlers below — they fetch og-image.png directly. Blocked,
 #     a link shared on WhatsApp or LinkedIn renders as a grey box.
 
+# Content signals — draft-romm-aipref-contentsignals. Declares how we want
+# automated systems to use this content. Not enforcement, a stated preference.
+#
+#   search=yes     build an index and link here. This is how people find us.
+#   ai-input=yes   quote and cite us in AI answers, including RAG. Saying no
+#                  would contradict /llms.txt, which exists to help exactly
+#                  those systems describe us accurately.
+#   ai-train=no    do not train or fine-tune models on this content. Training
+#                  sends nobody back to us; being cited does.
+#
+# It sits in the User-agent: * group because a crawler obeys only its most
+# specific matching group, and every AI crawler falls under * here — the named
+# groups further down are social preview fetchers and the AdSense crawler.
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
 Allow: /$
 Allow: /index.html
 Allow: /images/

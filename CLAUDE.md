@@ -139,10 +139,15 @@ HTTP→HTTPS redirect — are Cloudflare settings. No pull request can change or
 verify them, so `.github/workflows/observatory.yml` re-scans the live site weekly
 and opens a rolling issue if the grade falls below `.github/observatory-floor`.
 
-Cloudflare also injects into responses: a managed `robots.txt` block (AI-crawler
-rules and content signals) and an inline bot-detection script that the CSP blocks
-and **cannot** allow, because its body carries a per-request token. Both are
-dashboard settings, documented in `SECURITY-HEADERS.md`.
+Cloudflare injects an inline bot-detection script that the CSP blocks and
+**cannot** allow, because its body carries a per-request token. It is a
+dashboard setting, documented in `SECURITY-HEADERS.md`.
+
+It does **not** inject a managed `robots.txt` block. This file used to claim it
+did; fetching the live file cache-busted returns something byte-identical to
+the one in this repository. That matters because the claim implied AI-crawler
+rules and content signals were being handled at the edge when nothing was
+handling them. The `Content-Signal` line in `robots.txt` is ours.
 
 ## Layout
 
