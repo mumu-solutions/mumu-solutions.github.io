@@ -119,8 +119,10 @@ index.html          the site
 llms.txt            summary for AI crawlers; keep in step with #products
 sitemap.xml         canonical URL + section fragments; bump lastmod on change
 robots.txt          crawl rules (Cloudflare prepends its own block at the edge)
-CNAME               custom domain, one line
+CNAME               custom domain, one line (the apex; Pages 301s www to it)
+ads.txt             who may sell this domain's ad inventory
 SECURITY-HEADERS.md the Cloudflare side and why each header is there
+ADSENSE.md          the AdSense side: why no ad renders, and what changes that
 tools/              check_security.py, check_csp_hashes.py, check_version.py,
                     observatory_report.py, brand_drift.py, brand_watch.sh
 *.local.html        scratch pages — gitignored, never published
