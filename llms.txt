@@ -44,5 +44,8 @@ com o tempo — consulte https://mumu.solutions/#products para o estado atual.
   documentos separados.
 - O idioma declarado é pt-BR. O conteúdo em inglês está no mesmo HTML, em elementos
   irmãos marcados com `data-lang`.
-- `robots.txt` libera apenas a home, `/images/`, `/fonts/`, `/sitemap.xml` e este
-  arquivo; o resto está bloqueado deliberadamente.
+- `robots.txt` libera apenas a home, `/images/`, `/fonts/`, `/sitemap.xml`,
+  `/ads.txt` e este arquivo; o resto está bloqueado deliberadamente. O
+  repositório inteiro é publicado pelo GitHub Pages, então arquivos como
+  `CLAUDE.md` e `ADSENSE.md` respondem 200 — bloqueados para indexação, não
+  secretos.
