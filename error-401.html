@@ -16,7 +16,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' https://*.google-analytics.com; font-src 'self'; style-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src https://*.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 
 <title>401 — Acesso restrito · MUMU Solutions</title>
@@ -35,11 +35,6 @@
 <link rel="icon" type="image/png" sizes="32x32" href="images/brand/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/brand/apple-touch-icon-180.png">
 <link rel="stylesheet" href="error.css">
-<!-- Google tag (gtag.js) — GA4 G-QV4DCF3HTN. Init is in analytics.js, not
-     inline: this page has no hash tooling behind it. analytics.js is
-     render-blocking so dataLayer exists before the async tag runs. -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QV4DCF3HTN"></script>
-<script src="analytics.js"></script>
 <script src="error.js"></script>
 </head>
 <body>
@@ -77,12 +72,13 @@
     <a class="btn" href="/">Back home</a>
   </div>
 
-  <!-- These pages run Google Analytics too, and they have no privacy dialog of
-       their own, so the disclosure has to be self-contained. Deliberately not a
-       link into index.html's dialog: that dialog opens from a button, so a link
-       would land the visitor on the home page with nothing showing. -->
-  <p class="privacy-note" data-lang="pt">Esta página usa cookies do Google Analytics para medir o uso do site. Detalhes e como recusar estão em <strong>Privacidade</strong>, no rodapé da página inicial.</p>
-  <p class="privacy-note" data-lang="en">This page uses Google Analytics cookies to measure site use. Details and how to opt out are under <strong>Privacy</strong>, in the home page footer.</p>
+  <!-- Cloudflare measures these pages at the edge and they have no privacy
+       dialog of their own, so the disclosure has to be self-contained.
+       Deliberately not a link into index.html's dialog: that dialog opens from
+       a button, so a link would land the visitor on the home page with
+       nothing showing. -->
+  <p class="privacy-note" data-lang="pt">O uso deste site é medido pelo Cloudflare Web Analytics, que não usa cookies. Detalhes estão em <strong>Privacidade</strong>, no rodapé da página inicial.</p>
+  <p class="privacy-note" data-lang="en">Use of this site is measured by Cloudflare Web Analytics, which sets no cookies. Details are under <strong>Privacy</strong>, in the home page footer.</p>
   <span class="wordmark" role="img" aria-label="MUMU Solutions"></span>
 </main>
 

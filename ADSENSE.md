@@ -48,10 +48,9 @@ grade falls below `.github/observatory-floor`.
 
 Two constraints for that edit, both easy to trip:
 
-- `check_security.py` rejects any wildcard that is not in
-  `ALLOWED_WILDCARD_SOURCES`, which holds one entry for Google Analytics. So
-  `*.googlesyndication.com` fails the gate; enumerate the ad hosts literally,
-  or make the same kind of case the analytics one makes.
+- `check_security.py` rejects any wildcard not in `ALLOWED_WILDCARD_SOURCES`,
+  which is now empty. So `*.googlesyndication.com` fails the gate: enumerate
+  the ad hosts literally, or argue the case for an entry.
 - every new host also needs an entry in `ALLOWED_RESOURCE_HOSTS`, or the gate
   rejects it as an unreviewed third party.
 
@@ -123,10 +122,10 @@ on `index.html` would silently switch them on here too, if the loader were
 present. Keeping it off the error pages means that decision cannot leak into a
 policy breach by accident.
 
-The error pages' `script-src` is `'self' https://www.googletagmanager.com` —
-same-origin plus the analytics tag, and no ad host. Adding the loader means
-widening the CSP on four more files first, which is the speed bump this note is
-meant to be.
+The error pages' `script-src` is a bare `'self'` and they have no `connect-src`
+at all, so nothing on them reaches off-origin. Adding the loader means widening
+the CSP on four more files first, which is the speed bump this note is meant to
+be.
 
 ## Still open
 

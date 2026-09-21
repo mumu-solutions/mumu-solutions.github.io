@@ -43,9 +43,6 @@ ALLOWED_RESOURCE_HOSTS = {
     # and a wider img-src. Adding them is what makes ads render, and it is the
     # decision this list exists to slow down.
     "pagead2.googlesyndication.com",
-    # Google Analytics 4 tag loader. The collect endpoint it talks to is not a
-    # script host and so does not belong in this set.
-    "www.googletagmanager.com",
 } | ({_SELF_HOST} if _SELF_HOST else set())
 
 # Sources that may contain a "*", and nothing else may.
@@ -55,22 +52,15 @@ ALLOWED_RESOURCE_HOSTS = {
 # the leftmost label of a named host is a different animal: it cannot widen
 # past that one registrable domain.
 #
-# GA4 needs exactly one. The tag builds its collect host at runtime from a
-# subdomain the server hands it, falling back to "www" — in the shipped
-# gtag.js:
-#
-#     return "https://" + (Jk() || "www") + ".google-analytics.com/" + a
-#
-# That subdomain is regional (region1, region2, ...), it is chosen per visitor,
-# and it is not knowable here — so an allowlist of literal hosts would drop
-# hits for some visitors and silently under-report. Google documents
-# *.google-analytics.com for this reason.
+# This set is EMPTY, and that is the desired state. It briefly held
+# https://*.google-analytics.com, because GA4 builds its collect host per
+# visitor from a regional subdomain that cannot be enumerated. Google Analytics
+# was removed in 1.5.0 and the entry went with it — an allowance kept after the
+# thing it allowed is gone is how a policy quietly rots.
 #
 # Adding to this set widens the policy. Do it only with the same kind of
-# evidence: the thing genuinely cannot be enumerated.
-ALLOWED_WILDCARD_SOURCES = {
-    "https://*.google-analytics.com",
-}
+# evidence GA had: the host genuinely cannot be enumerated.
+ALLOWED_WILDCARD_SOURCES: set[str] = set()
 
 # Only "https://*.label.tld" qualifies. "*", "*.com", "https://*" and
 # "https://example.*" all fail this and are rejected regardless of the set.
