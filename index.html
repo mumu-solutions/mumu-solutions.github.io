@@ -71,13 +71,13 @@
      approval and both are how Google verifies the domain. ADSENSE.md has the
      exact steps to put the loader back.
 
-     frame-ancestors is listed and browsers IGNORE it in a meta CSP. This is not
-     a guess: framing https://mumu.solutions/ from another origin was tested
-     and the document loaded, so the site is framable today despite this line. It
-     stays because MDN Observatory's x-frame-options test reads meta CSP and
-     passes on it, and because it records the intent — but it is the one
-     directive here that protects nobody. Real clickjacking protection needs the
-     response header, from Cloudflare. See SECURITY-HEADERS.md.
+     frame-ancestors is deliberately ABSENT from this policy, and must not be
+     added back: browsers ignore it in a meta CSP, so listing it here only ever
+     looked protective. It lived here until 1.8.0, and the site was framable
+     that whole time. It is now a Cloudflare response header, present on every
+     response including the error pages, where it actually blocks framing.
+     tools/check_security.py asserts this meta does NOT carry it, and
+     tools/check_live.sh asserts the real header does. See SECURITY-HEADERS.md.
 
      The rest cannot be expressed here at all — HSTS, X-Content-Type-Options,
      COOP, COEP, CORP and the HTTP->HTTPS redirect are response headers or infra.
@@ -104,7 +104,7 @@
      guessing from a commit: curl the page and read it. The two must agree —
      tools/check_version.py enforces that on every deploy. Do not edit this by
      hand; edit VERSION and run the script with --sync. -->
-<meta name="version" content="1.8.0">
+<meta name="version" content="1.8.1">
 <link rel="canonical" href="https://mumu.solutions/">
 <!-- No hreflang alternates on purpose. Both languages live in this one
      document, so ?lang=en is the same URL with the same canonical — an
