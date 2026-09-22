@@ -1,11 +1,18 @@
 # robots.txt — MUMU Solutions
-# Updated: 2026-09-21d
+# Updated: 2026-09-22
 #
 # Policy: only the homepage is indexable. Everything else is denied by the
 # Disallow below and opened back up case by case. /llms.txt and /ads.txt are
 # two of those exceptions — a file written for crawlers is useless if
 # robots.txt hides it, and AdSense flags the domain while ads.txt is
 # unreachable.
+#
+# The home page is allowed as "/$" AND as "/?", and both lines are needed.
+# The $ anchors the match to the end of the URL, so "Allow: /$" covers "/" and
+# nothing else — every query string falls through to the Disallow below. That
+# silently blocked /?lang=en, which this site publishes as the shareable link
+# for the English version, for Googlebot and for all four social preview
+# crawlers. It also blocked any inbound link carrying a utm_ tag.
 #
 # Two things must stay allowed for the site to work correctly in search and
 # in social previews:
@@ -38,6 +45,7 @@
 User-agent: *
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 Allow: /$
+Allow: /?
 Allow: /index.html
 Allow: /images/
 Allow: /fonts/
@@ -51,24 +59,28 @@ Disallow: /
 # Social crawlers need the Open Graph image, not just the page.
 User-agent: facebookexternalhit
 Allow: /$
+Allow: /?
 Allow: /index.html
 Allow: /images/
 Disallow: /
 
 User-agent: Twitterbot
 Allow: /$
+Allow: /?
 Allow: /index.html
 Allow: /images/
 Disallow: /
 
 User-agent: LinkedInBot
 Allow: /$
+Allow: /?
 Allow: /index.html
 Allow: /images/
 Disallow: /
 
 User-agent: WhatsApp
 Allow: /$
+Allow: /?
 Allow: /index.html
 Allow: /images/
 Disallow: /
@@ -79,6 +91,7 @@ Disallow: /
 # letting the allowance depend on the User-agent: * block staying as it is.
 User-agent: Mediapartners-Google
 Allow: /$
+Allow: /?
 Allow: /index.html
 Allow: /images/
 Allow: /fonts/

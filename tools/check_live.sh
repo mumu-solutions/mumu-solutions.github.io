@@ -62,6 +62,33 @@ chk "fonts are long-lived" 'cache-control:.*max-age=(2[0-9]{6,}|[3-9][0-9]{6,})'
 chk "images are long-lived" 'cache-control:.*max-age=(2[0-9]{6,}|[3-9][0-9]{6,})' \
     "$BASE/images/brand/favicon-32.png"
 
+hdr "Crawlability"
+# "Allow: /$" covers "/" and nothing else, so a query string falls through to
+# the Disallow. That blocked /?lang=en — the link this site publishes for its
+# English version — for Googlebot and every social preview crawler, which turns
+# a shared link into a grey box. Fixed in 1.8.2 by also allowing "/?".
+curl -sL "$BASE/robots.txt" -o /tmp/_robots.$$ 2>/dev/null
+python3 - "$BASE" /tmp/_robots.$$ <<'PYEOF'
+import sys, urllib.robotparser
+base, path = sys.argv[1], sys.argv[2]
+rp = urllib.robotparser.RobotFileParser()
+rp.parse(open(path, encoding="utf-8").read().splitlines())
+bad = 0
+for ua in ("Googlebot", "facebookexternalhit", "LinkedInBot", "WhatsApp"):
+    for url in ("/", "/?lang=en"):
+        ok = rp.can_fetch(ua, base + url)
+        print(f"  {'PASS' if ok else 'FAIL'}  {ua} may fetch {url}")
+        bad |= (not ok)
+# and the things that must stay blocked
+for url in ("/CLAUDE.md", "/tools/check_live.sh"):
+    blocked = not rp.can_fetch("Googlebot", base + url)
+    print(f"  {'PASS' if blocked else 'FAIL'}  {url} stays out of the index")
+    bad |= (not blocked)
+sys.exit(bad)
+PYEOF
+[ $? -ne 0 ] && fail=1
+rm -f /tmp/_robots.$$
+
 hdr "Published surface"
 for p in 404.html error-401.html error-403.html error-500.html \
          robots.txt sitemap.xml ads.txt llms.txt; do
