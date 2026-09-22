@@ -71,14 +71,25 @@ cls = a["cumulative-layout-shift"]["numericValue"]
 show("largest-contentful-paint", lcp, lcp < float(max_lcp), f"{lcp:.0f} ms")
 show("cumulative-layout-shift", cls, cls < float(max_cls), f"{cls:.3f}")
 
-# Attribute the console errors, because almost none of them are ours.
+# Attribute the console errors. Three buckets, not two: a script injected at
+# the edge is served FROM our origin, so matching on the hostname alone files
+# Cloudflare's bot-detection script under "ours" and sends someone hunting a
+# bug that is not there. Its body carries a per-request token, so it can never
+# be hashed and the CSP will always refuse it — see CLAUDE.md.
 items = ((a.get("errors-in-console") or {}).get("details") or {}).get("items", [])
-ours, third = [], []
+EDGE = ("Executing inline script violates",)   # Cloudflare bot detection
+ours, third, edge = [], [], []
 for it in items:
-    text = json.dumps(it)
-    (ours if "mumu.solutions" in text and "google" not in text else third).append(it)
+    desc = it.get("description") or ""
+    url = ((it.get("sourceLocation") or {}).get("url") or "")
+    if any(sig in desc for sig in EDGE) and "mumu.solutions" in url:
+        edge.append(it)
+    elif "mumu.solutions" in url and "google" not in json.dumps(it):
+        ours.append(it)
+    else:
+        third.append(it)
 print(f"  NOTE  console errors                  {len(items)}"
-      f"  ({len(third)} third-party, {len(ours)} ours)")
+      f"  ({len(third)} third-party, {len(edge)} edge-injected, {len(ours)} ours)")
 for it in ours:
     print(f"        ours: {(it.get('description') or '')[:88]}")
 sys.exit(bad)
