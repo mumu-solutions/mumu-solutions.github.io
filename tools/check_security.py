@@ -35,14 +35,10 @@ _SELF_HOST = _CNAME.read_text(encoding="utf-8").strip() if _CNAME.exists() else 
 ALLOWED_RESOURCE_HOSTS = {
     "static.cloudflareinsights.com",
     "cloudflareinsights.com",
-    # AdSense loader. Reviewed and accepted: the host is named in the CSP and
-    # described in the privacy dialog, and it cannot be self-hosted because
-    # Google generates the file per request. Note this entry admits the loader
-    # only — the hosts that actually draw ads (googleads.g.doubleclick.net,
-    # tpc.googlesyndication.com) are deliberately absent, and so are frame-src
-    # and a wider img-src. Adding them is what makes ads render, and it is the
-    # decision this list exists to slow down.
-    "pagead2.googlesyndication.com",
+    # No ad host. pagead2.googlesyndication.com was here while the AdSense
+    # loader shipped; it was removed in 1.7.0 and the allowance went with it,
+    # so the gate rejects it again. Putting the loader back means adding the
+    # host here in the same commit — see ADSENSE.md.
 } | ({_SELF_HOST} if _SELF_HOST else set())
 
 # Sources that may contain a "*", and nothing else may.

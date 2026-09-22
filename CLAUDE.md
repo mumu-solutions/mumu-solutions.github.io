@@ -59,9 +59,10 @@ Never hand-edit a `sha256-` value.
 
 ### Third parties
 
-Three hosts are allowed, each named in `ALLOWED_RESOURCE_HOSTS` and in the
-privacy dialog: Cloudflare Insights, `pagead2.googlesyndication.com` (the
-AdSense loader — see `ADSENSE.md`) and the site's own host from `CNAME`.
+Two hosts are allowed, each named in `ALLOWED_RESOURCE_HOSTS` and in the
+privacy dialog: Cloudflare Insights and the site's own host from `CNAME`. The
+AdSense loader was removed in 1.7.0 and its host went with it — see
+`ADSENSE.md` for the measurement and for how to put it back.
 
 `ALLOWED_WILDCARD_SOURCES` is **empty**, and should stay that way. It briefly
 held `https://*.google-analytics.com` while Google Analytics was installed,

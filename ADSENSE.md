@@ -1,12 +1,51 @@
-# AdSense: what is live, what is deliberately not
+# AdSense: removed for now, and how to put it back
 
 Companion to `SECURITY-HEADERS.md`. That file covers the surfaces this
 repository cannot assert because they live in Cloudflare; this one covers the
-surfaces it cannot assert because they live in the AdSense dashboard — plus the
-one decision in `index.html` that looks like a mistake until you read why.
+surfaces it cannot assert because they live in the AdSense dashboard.
 
 Publisher ID: `ca-pub-1351604242843112`. Canonical host: the apex,
 `mumu.solutions` (see `CNAME`).
+
+## Status: the loader is not on the site
+
+Removed in **1.7.0**, until the account is approved. It was costing real
+performance and delivering nothing, because this site's own CSP blocked every
+ad frame. Measured on the live site, same URL, blocking only the ad hosts:
+
+| | Performance | FCP | LCP | TBT |
+|---|---|---|---|---|
+| with the loader | 74.7 | 3106 ms | 4831 ms | 68 ms |
+| ad hosts blocked | **94.5** | **1970 ms** | **2521 ms** | **0 ms** |
+
+It also produced 8 of the 9 console errors on the page — inline style, inline
+script, a connection to `adtrafficquality.google`, framing
+`googleads.g.doubleclick.net`, a `gen_204` pixel — each one our own policy
+refusing the tag.
+
+**What stays, deliberately:** the `google-adsense-account` meta on every page
+and `/ads.txt`. Neither loads anything or costs a millisecond, and both are how
+Google verifies the domain — which is the approval being waited on. Removing
+them would undo the verification.
+
+## Putting it back
+
+Four changes, all in one commit:
+
+1. `index.html` — restore the loader in `<head>`:
+   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1351604242843112" crossorigin="anonymous"></script>`
+2. `index.html` CSP — add `https://pagead2.googlesyndication.com` to `script-src`.
+3. `tools/check_security.py` — add that host back to `ALLOWED_RESOURCE_HOSTS`,
+   or the gate rejects it as unreviewed.
+4. The privacy dialog — restore the Google AdSense section. "The site" must go
+   back to naming two outside services, and "your rights" currently states
+   plainly that the site shows no advertising and sets no cookies. Both become
+   false the moment the loader returns.
+
+Then re-measure with `./tools/check_lighthouse.sh` and decide whether the ads
+are worth what they cost.
+
+## Ads still will not render without opening the CSP
 
 ## In the repository
 
@@ -30,8 +69,8 @@ crawler that matters. The same is true of the next root file somebody adds.
 
 ## No ads render, on purpose
 
-The CSP permits `pagead2.googlesyndication.com` on `script-src` and nothing
-more. That is enough for the loader to download and not enough to draw an ad:
+Even with the loader back, the CSP permits nothing beyond the script host.
+That is enough for the loader to download and not enough to draw an ad:
 
 - ads are drawn in **iframes** from `googleads.g.doubleclick.net` and
   `tpc.googlesyndication.com`. `frame-src` is absent, so `default-src 'none'`
@@ -102,8 +141,8 @@ h=[x for x in s if x["seller_id"]=="pub-1351604242843112"]; print(h or "not list
 
 `404.html`, `error-401.html`, `error-403.html` and `error-500.html` each carry
 `<meta name="google-adsense-account">` — it proves the domain and serves no ad,
-so there is no reason for it to be absent. None of them carries the loader
-`<script>`, and that is deliberate. Google Publisher Policies, under Inventory
+so there is no reason for it to be absent. None of them ever carried the loader,
+and none should, even after it returns to `index.html`. Google Publisher Policies, under Inventory
 Value:
 
 > We do not allow Google-served ads on screens: without publisher-content or
