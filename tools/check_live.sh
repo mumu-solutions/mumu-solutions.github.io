@@ -44,9 +44,10 @@ chk "nosniff"                     'x-content-type-options: *nosniff'            
 chk "referrer policy is private"  'referrer-policy: *(no-referrer|same-origin|strict-origin)' "$BASE/"
 chk "COOP"                        'cross-origin-opener-policy: *same-origin'        "$BASE/"
 chk "CORP"                        'cross-origin-resource-policy: *same-origin'      "$BASE/"
-# frame-ancestors only works as a header. While this fails, the site is
-# framable and the meta copy exists purely for the Observatory scanner.
-chk "CSP header carries frame-ancestors" 'content-security-policy:.*frame-ancestors' "$BASE/"
+# This is now the ONLY place framing is blocked: the meta copy was removed in
+# 1.8.0 because browsers ignore it there. If this fails, the site is framable.
+chk "CSP header carries frame-ancestors" "content-security-policy:.*frame-ancestors +'none'" "$BASE/"
+chk "error pages are covered too"        "content-security-policy:.*frame-ancestors" "$BASE/404.html"
 
 hdr "Redirects  (same host to TLS first, then canonical)"
 for u in "http://${BASE#https://}/" "https://www.${BASE#https://}/"; do

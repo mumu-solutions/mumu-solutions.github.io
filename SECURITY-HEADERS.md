@@ -79,7 +79,7 @@ been done.
 | `Cross-Origin-Opener-Policy` | **absent** |
 | `Cross-Origin-Embedder-Policy` | **absent** |
 | `Cross-Origin-Resource-Policy` | **absent** |
-| `Content-Security-Policy` | **absent** — so `frame-ancestors` is inert and the site is framable |
+| `Content-Security-Policy` | applied as `frame-ancestors 'none'` since 1.8.0 — framing is now actually blocked |
 
 The A+ is real but rests on what Observatory reads from `index.html`: the meta
 CSP and the meta referrer. The header set below is what would make the policy
@@ -95,7 +95,7 @@ Rules → Transform Rules → **Modify Response Header**, applied to all request
 | `Cross-Origin-Opener-Policy` | `same-origin` |
 | `Cross-Origin-Embedder-Policy` | `credentialless` |
 | `Cross-Origin-Resource-Policy` | `same-origin` |
-| `Content-Security-Policy` | the policy from `index.html`, plus `frame-ancestors 'none'` |
+| `Content-Security-Policy` | `frame-ancestors 'none'` — **only** that directive |
 
 ### HSTS, rolled out in stages
 
@@ -122,10 +122,11 @@ end to opt in. Verify in the console after enabling.
 
 ### CSP at the edge, if you duplicate it
 
-Two enforced CSPs **intersect** — a resource must satisfy both. Keeping the same
-policy in the meta tag and the header is fine only while they are identical. If
-you would rather keep one copy, the header is the better home: it is the only
-place `frame-ancestors` actually works.
+Two enforced CSPs **intersect** — a resource must satisfy both. That is why the
+header carries `frame-ancestors` and nothing else: it covers the one directive a
+meta tag cannot, while the meta keeps the rest. Duplicating the whole policy
+would mean any future divergence between the two becomes a silent block, and
+the error pages run a stricter policy of their own.
 
 ## Reachable score
 

@@ -89,10 +89,11 @@ JavaScript off they still render Portuguese in the visitor's OS theme.
 `index.html` hides every `[data-lang]` lacking an `.on` class its script adds,
 so it shows nothing at all. Do not copy that pattern into an error page.
 
-`frame-ancestors 'none'` is in the CSP but **browsers ignore it in a `<meta>`
-tag** — this was tested, and the live site is currently framable. It is kept
-because Observatory reads it. Real clickjacking protection needs a response
-header; see `SECURITY-HEADERS.md`.
+`frame-ancestors` is **not** in the meta CSP, and must not be put back:
+browsers ignore it there, so its only effect was to look protective. Since
+1.8.0 it is a Cloudflare response header, where it actually blocks framing —
+the site was framable until then. `tools/check_live.sh` asserts the real one;
+`check_security.py` asserts the meta does *not* carry it.
 
 ## Versioning
 

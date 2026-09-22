@@ -119,12 +119,19 @@ def main() -> int:
                    for src in directive.split()[1:]
                    if re.fullmatch(r"[a-z][a-z0-9+.-]*:", src)]
     require(not scheme_only, "no scheme-only source", ", ".join(scheme_only))
-    for d in ("base-uri", "object-src", "form-action", "frame-ancestors",
+    # frame-ancestors is deliberately NOT in this list. Browsers ignore it in a
+    # meta CSP, so asserting it here only ever proved the string was present.
+    # It moved to the Cloudflare response header in 1.8.0, where it actually
+    # blocks framing — and the assertion moved with it, to
+    # tools/check_live.sh, which reads the live header. A rule is only worth
+    # keeping next to the thing it can actually observe.
+    for d in ("base-uri", "object-src", "form-action",
               "script-src", "style-src", "img-src", "font-src", "connect-src"):
         require(d in directives, f"{d} is declared")
     require(directives.get("object-src") == "object-src 'none'", "object-src is 'none'")
-    require(directives.get("frame-ancestors") == "frame-ancestors 'none'",
-            "frame-ancestors is 'none'")
+    require("frame-ancestors" not in csp,
+            "no frame-ancestors in the meta CSP (it belongs in the header)",
+            "browsers ignore it here; check_live.sh asserts the real one")
 
     print("\nInline hashes")
     for directive, found in inline_hashes(html).items():

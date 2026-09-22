@@ -82,7 +82,7 @@
      The rest cannot be expressed here at all — HSTS, X-Content-Type-Options,
      COOP, COEP, CORP and the HTTP->HTTPS redirect are response headers or infra.
      See SECURITY-HEADERS.md for the Cloudflare side. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self' 'sha256-u1rF+gBQKm/E9ydjFjyHyHUXrpiFMne2IlD18TnF8OQ='; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-zkNfEK02bw+wJAKp74YAAOsgs1CgkqopHDj97A+iVyA=' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self'; font-src 'self'; style-src 'self' 'sha256-u1rF+gBQKm/E9ydjFjyHyHUXrpiFMne2IlD18TnF8OQ='; script-src 'self' 'sha256-4Ujx3wWgCFYHdDZdnzUwDF9UEooXQmQgLOSq/F3eP+U=' 'sha256-zkNfEK02bw+wJAKp74YAAOsgs1CgkqopHDj97A+iVyA=' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; upgrade-insecure-requests">
 
 <!-- Referrer-Policy. The meta form is honoured by browsers; the header form is
      set in Cloudflare too, so a scanner sees it. -->
@@ -104,7 +104,7 @@
      guessing from a commit: curl the page and read it. The two must agree —
      tools/check_version.py enforces that on every deploy. Do not edit this by
      hand; edit VERSION and run the script with --sync. -->
-<meta name="version" content="1.7.1">
+<meta name="version" content="1.8.0">
 <link rel="canonical" href="https://mumu.solutions/">
 <!-- No hreflang alternates on purpose. Both languages live in this one
      document, so ?lang=en is the same URL with the same canonical — an
