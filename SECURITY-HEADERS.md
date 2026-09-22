@@ -163,13 +163,20 @@ Cache Rules, in this order — the first match wins:
 | 1 | `/`, `*.html` | no-store | 30 s – 5 min |
 | 2 | `/robots.txt`, `/ads.txt`, `/sitemap.xml`, `/llms.txt` | 5 min | 5 min |
 | 3 | `/fonts/*`, `/images/*` | 1 year | 1 year |
-| 4 | `*.css`, `*.js` | 1 year | 1 year |
+| 4 | `*.css`, `*.js` | 1 h | 1 h |
 | 5 | everything else | 5 min | 5 min |
 
-Row 4 is only safe because of `?v=<VERSION>`. `error.css` and `error.js` carry
-no hash in their names, so `tools/check_version.py --sync` stamps the version
-into every reference and the deploy fails if a stamp is stale. Remove the
-stamping and row 4 becomes a trap: visitors keep the old stylesheet for a year.
+Row 4 sits at an hour by choice, not by necessity. `error.css` and `error.js`
+are the only two files it covers, they are small, and they are only ever
+fetched by an error page — so the saving from a longer TTL is a rounding error
+against the risk of getting it wrong. Lighthouse will keep reporting a few KiB
+of theoretical saving here; that is the trade, knowingly made.
+
+The version stamp stays regardless. `tools/check_version.py --sync` writes
+`?v=<VERSION>` into every reference and the deploy fails on a stale one, so the
+option to raise this row to a year remains open and safe. Without the stamp it
+would not be: neither file carries a hash in its name, and a browser cache
+cannot be purged.
 
 Row 1 is the one that bites during development. HTML at a 2-hour TTL is why a
 published change appeared to be missing — the origin had it and the edge did
