@@ -7,7 +7,8 @@ live site without guessing from a commit hash. Two copies of anything drift, so
 this is the guard — the same reason tools/check_csp_hashes.py exists.
 
     python3 tools/check_version.py           # verify, exit 1 on drift
-    python3 tools/check_version.py --sync     # copy VERSION into index.html
+    python3 tools/check_version.py --sync     # copy VERSION into index.html and
+                                              # stamp ?v= on the error pages' assets
     python3 tools/check_version.py --bump minor   # raise VERSION, then sync
 
 What the parts mean for this site — the rule is the public contract, not the
@@ -34,6 +35,41 @@ PAGE = ROOT / "index.html"
 
 SEMVER = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 META = re.compile(r'(<meta\s+name="version"\s+content=")([^"]*)(">)', re.I)
+
+# Assets whose URL must carry the version, and the pages that reference them.
+#
+# error.css and error.js have no hash in their filename, so without this the
+# only safe browser cache lifetime is a short one: a visitor who already has
+# the old file would keep it, and there is no way to purge a browser. Stamping
+# ?v=<VERSION> makes the URL change on every release, which is what lets the
+# Cloudflare rule give *.css and *.js a one-year Browser TTL safely.
+#
+# index.html is not here: its CSS and JS are inline.
+VERSIONED_ASSETS = ("error.css", "error.js")
+ERROR_PAGES = ("404.html", "error-401.html", "error-403.html", "error-500.html")
+
+
+def _asset_re(asset: str) -> re.Pattern:
+    """Match the asset reference with or without an existing ?v= stamp."""
+    return re.compile(r'((?:href|src)=")(' + re.escape(asset) + r')(\?v=[^"]*)?(")')
+
+
+def stamp_assets(version: str, write: bool) -> list[str]:
+    """Return pages whose asset stamps do not match; rewrite them if write."""
+    stale = []
+    for name in ERROR_PAGES:
+        page = ROOT / name
+        if not page.exists():
+            continue
+        text = original = page.read_text(encoding="utf-8")
+        for asset in VERSIONED_ASSETS:
+            text = _asset_re(asset).sub(
+                lambda m: f'{m.group(1)}{m.group(2)}?v={version}{m.group(4)}', text)
+        if text != original:
+            stale.append(name)
+            if write:
+                page.write_text(text, encoding="utf-8")
+    return stale
 
 
 def read_version() -> str:
@@ -80,17 +116,27 @@ def main() -> int:
         return 1
     in_page = m.group(2).strip()
 
-    if in_page == version:
-        print(f"OK: VERSION and index.html both say {version}")
+    syncing = "--sync" in args
+    stale_assets = stamp_assets(version, write=syncing)
+
+    if in_page == version and not stale_assets:
+        print(f"OK: VERSION, index.html and the asset stamps all say {version}")
         return 0
 
-    if "--sync" not in args:
-        print(f"Version drift: VERSION says {version}, index.html says {in_page}")
+    if not syncing:
+        if in_page != version:
+            print(f"Version drift: VERSION says {version}, index.html says {in_page}")
+        if stale_assets:
+            print("Asset stamps out of date in: " + ", ".join(stale_assets))
         print("\nRun:  python3 tools/check_version.py --sync")
         return 1
 
-    PAGE.write_text(html[: m.start(2)] + version + html[m.end(2) :], encoding="utf-8")
-    print(f"Synced index.html to {version}")
+    if in_page != version:
+        PAGE.write_text(html[: m.start(2)] + version + html[m.end(2) :], encoding="utf-8")
+        print(f"Synced index.html to {version}")
+    if stale_assets:
+        print(f"Stamped ?v={version} on error.css/error.js in: "
+              + ", ".join(stale_assets))
     return 0
 
 

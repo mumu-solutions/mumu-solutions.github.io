@@ -97,6 +97,13 @@ python3 tools/check_version.py               # verify
 python3 tools/check_version.py --bump minor  # raise VERSION and sync the page
 ```
 
+`--sync` does two things: it copies `VERSION` into the `<meta>`, and it stamps
+`?v=<VERSION>` onto every `error.css` / `error.js` reference in the error
+pages. Those two files have no hash in their names, and the stamp is what lets
+Cloudflare give `*.css` and `*.js` a one-year browser cache without stranding
+visitors on an old stylesheet. A stale stamp fails the deploy, same as a stale
+meta. See the cache table in `SECURITY-HEADERS.md`.
+
 **The rule is the public contract, not the size of the diff.**
 
 | part | when |
@@ -156,7 +163,7 @@ index.html          the site
 404.html            served by Pages for any unresolved path
 error-401/403/500.html  same design; NOT auto-served, and NOT named
                     401.html: GitHub Pages reserves that path
-error.css/error.js  the error pages' styles and their theme+language controls
+error.css/error.js  the error pages' styles and controls; referenced with ?v=
 llms.txt            summary for AI crawlers; keep in step with #products
 sitemap.xml         canonical URL + section fragments; bump lastmod on change
 robots.txt          crawl rules (Cloudflare prepends its own block at the edge)

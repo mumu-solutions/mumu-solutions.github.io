@@ -126,6 +126,46 @@ place `frame-ancestors` actually works.
 but HSTS, the redirect and `nosniff` are worth 45 points between them and none
 can be expressed in HTML. A+ requires the Cloudflare work.
 
+## Cache lifetimes
+
+`Cache-Control` is a response header, so like everything else in this file it
+is set in Cloudflare and no pull request can change or verify it. It is here
+because getting it wrong is silent in both directions: too short wastes
+bandwidth on every repeat visit, too long serves a stale site with no way to
+recall it.
+
+The rule that decides every row below: **if the filename does not change when
+the content changes, the Browser TTL must be short.** Edge TTL is purgeable;
+the visitor's browser is not.
+
+Cache Rules, in this order — the first match wins:
+
+| # | Matches | Browser TTL | Edge TTL |
+|--:|---|---|---|
+| 1 | `/`, `*.html` | no-store | 30 s – 5 min |
+| 2 | `/robots.txt`, `/ads.txt`, `/sitemap.xml`, `/llms.txt` | 5 min | 5 min |
+| 3 | `/fonts/*`, `/images/*` | 1 year | 1 year |
+| 4 | `*.css`, `*.js` | 1 year | 1 year |
+| 5 | everything else | 5 min | 5 min |
+
+Row 4 is only safe because of `?v=<VERSION>`. `error.css` and `error.js` carry
+no hash in their names, so `tools/check_version.py --sync` stamps the version
+into every reference and the deploy fails if a stamp is stale. Remove the
+stamping and row 4 becomes a trap: visitors keep the old stylesheet for a year.
+
+Row 1 is the one that bites during development. HTML at a 2-hour TTL is why a
+published change appeared to be missing — the origin had it and the edge did
+not. If a publish looks like it did nothing, check `cf-cache-status` before
+checking the deploy:
+
+```bash
+curl -sI https://mumu.solutions/ | grep -iE 'cf-cache-status|age|cache-control'
+curl -s "https://mumu.solutions/?bust=$RANDOM" | grep -o 'name="version" content="[^"]*"'
+```
+
+The second command bypasses the edge copy, because the query string is part of
+the cache key. If the two disagree, it is cache, not a failed deploy.
+
 ## The CSP's inline-script hashes
 
 `script-src` pins a sha256 per inline `<script>`. Edit one and the browser

@@ -7,3 +7,10 @@ __pycache__/
 # look at rather than to publish. The .local.html suffix is the marker; name a file
 # that way and it stays out of the repo, and therefore out of what Pages serves.
 *.local.html
+
+# macOS finder metadata. Same reasoning as the bytecode above: the whole
+# repository is served, so a stray .DS_Store would be a public URL.
+.DS_Store
+
+# Agent worktrees and local session state.
+.claude/worktrees/
