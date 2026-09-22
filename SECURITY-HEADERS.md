@@ -68,6 +68,23 @@ been done.
 
 ## Cloudflare: the header set
 
+**Measured 2026-09-22 — most of this is still a plan, not a deployment.**
+`tools/check_live.sh` asserts each one against the live site:
+
+| Header | State |
+|---|---|
+| `X-Content-Type-Options` | applied |
+| `Strict-Transport-Security` | applied, but `max-age=15552000` (180 d) while carrying `preload` — not submittable, see above |
+| `Referrer-Policy` | **absent** — only the meta tag exists |
+| `Cross-Origin-Opener-Policy` | **absent** |
+| `Cross-Origin-Embedder-Policy` | **absent** |
+| `Cross-Origin-Resource-Policy` | **absent** |
+| `Content-Security-Policy` | **absent** — so `frame-ancestors` is inert and the site is framable |
+
+The A+ is real but rests on what Observatory reads from `index.html`: the meta
+CSP and the meta referrer. The header set below is what would make the policy
+actually enforced rather than merely scored.
+
 Rules → Transform Rules → **Modify Response Header**, applied to all requests.
 
 | Header | Value |

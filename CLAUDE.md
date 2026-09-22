@@ -17,6 +17,19 @@ python3 tools/check_security.py                                      # security 
 Both must pass before and after. The second one also runs on every deploy and
 **will block it**.
 
+After deploying, check what the repository cannot see — response headers, cache
+rules and the real browser numbers all live at the edge:
+
+```bash
+./tools/check_live.sh          # headers, cache TTLs, published surface, 404s
+./tools/check_lighthouse.sh    # Lighthouse in a pinned container, with a budget
+```
+
+Both take the live URL from `CNAME`, or a preview URL as the first argument.
+`check_lighthouse.sh` splits the console errors into ours and third-party,
+because on this site almost all of them are the AdSense loader being blocked by
+our own CSP — real, but not fixable here.
+
 ## Security requirements
 
 The site scores **A+** on MDN Observatory. Most of that is easy to lose by
@@ -166,12 +179,13 @@ error-401/403/500.html  same design; NOT auto-served, and NOT named
 error.css/error.js  the error pages' styles and controls; referenced with ?v=
 llms.txt            summary for AI crawlers; keep in step with #products
 sitemap.xml         canonical URL + section fragments; bump lastmod on change
-robots.txt          crawl rules (Cloudflare prepends its own block at the edge)
+robots.txt          crawl rules + Content-Signal (ours; nothing injected at the edge)
 CNAME               custom domain, one line (the apex; Pages 301s www to it)
 ads.txt             who may sell this domain's ad inventory
 SECURITY-HEADERS.md the Cloudflare side and why each header is there
 ADSENSE.md          the AdSense side: why no ad renders, and what changes that
 tools/              check_security.py, check_csp_hashes.py, check_version.py,
+                    check_live.sh, check_lighthouse.sh, lighthouse/Dockerfile,
                     observatory_report.py, brand_drift.py, brand_watch.sh
 *.local.html        scratch pages — gitignored, never published
 ```
